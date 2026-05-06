@@ -306,28 +306,23 @@ async function callAPI(prompt,max_tokens){
 }
 
 function extractJSON(text){
-  // Strip markdown fences
-  let clean=text.replace(/```json|```/g,'').trim();
-  // Extract between first { and last }
-  const start=clean.indexOf('{');
-  const end=clean.lastIndexOf('}');
-  if(start===-1||end===-1)throw new Error('No JSON found in response');
-  clean=clean.slice(start,end+1);
-  // Fix common LLM JSON issues:
-  // 1. Remove trailing commas before ] or }
-  clean=clean.replace(/,(\s*[}\]])/g,'$1');
-  // 2. Replace smart quotes with straight quotes
-  clean=clean.replace(/[‘’]/g,"'").replace(/[“”]/g,'"');
-  // 3. Remove newlines inside string values that break JSON
-  clean=clean.replace(/"([^"]*?)"/g,(match,p1)=>'"'+p1.replace(/
-/g,' ').replace(/
-/g,'')+'"');
-  try{
-    return JSON.parse(clean);
-  }catch(e){
-    // Last resort: try to manually extract fields
-    throw new Error('JSON parse failed: '+e.message+' — try pasting a shorter JD');
+  var c=text.split("```json").join("").split("```").join("").trim();
+  var s=c.indexOf("{"),e=c.lastIndexOf("}");
+  if(s===-1||e===-1)throw new Error("No JSON in response");
+  c=c.slice(s,e+1);
+  var fixed="";
+  var depth=0,inStr=false,esc=false;
+  for(var i=0;i<c.length;i++){
+    var ch=c[i];
+    if(esc){fixed+=ch;esc=false;continue;}
+    if(ch==="\\"){fixed+=ch;esc=true;continue;}
+    if(ch==="\""){inStr=!inStr;fixed+=ch;continue;}
+    if(inStr){if(ch==="\n"||ch==="\r")fixed+=" ";else fixed+=ch;continue;}
+    fixed+=ch;
   }
+  fixed=fixed.replace(/,[ \t\r\n]*([}\]])/g,"$1");
+  try{return JSON.parse(fixed);}
+  catch(e){throw new Error("Parse error: "+e.message);}
 }
 
 async function analyze(){
