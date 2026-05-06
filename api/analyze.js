@@ -1,12 +1,18 @@
-export default async function handler(req, res) {
-  // Only allow POST
+module.exports = async function handler(req, res) {
+  // Only allow POST and OPTIONS
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    return res.status(200).end();
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // CORS headers — allow your domain only
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   try {
@@ -36,6 +42,6 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error('Proxy error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error', detail: error.message });
   }
 }
