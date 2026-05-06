@@ -15,28 +15,29 @@ module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
-    return res.status(500).json({ error: 'API key not configured. Add GEMINI_API_KEY in Vercel environment variables.' });
+    return res.status(500).json({ error: 'API key not configured. Add GROQ_API_KEY in Vercel environment variables.' });
   }
 
   try {
     const { prompt, max_tokens } = req.body;
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            maxOutputTokens: max_tokens || 1000,
-            temperature: 0.3
-          }
-        })
-      }
-    );
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        max_tokens: max_tokens || 1000,
+        temperature: 0.3,
+        messages: [
+          { role: 'user', content: prompt }
+        ]
+      })
+    });
 
     const data = await response.json();
 
@@ -45,9 +46,9 @@ module.exports = async function handler(req, res) {
       return res.status(response.status).json({ error: errMsg });
     }
 
-    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    const text = data?.choices?.[0]?.message?.content;
     if (!text) {
-      return res.status(500).json({ error: 'Empty response from Gemini' });
+      return res.status(500).json({ error: 'Empty response from Groq' });
     }
 
     return res.status(200).json({ text });
