@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JD Matcher — Mayur Goyal</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #070A12;
+  --bg2: #0C1020;
+  --bg3: #111827;
+  --blue: #2F7BE5;
+  --blue-light: #5B9EF5;
+  --teal: #00C9A7;
+  --amber: #F5A623;
+  --text: #EEF2FF;
+  --text2: #8B97B0;
+  --text3: #3D4A60;
+  --border: rgba(255,255,255,0.07);
+  --border-blue: rgba(47,123,229,0.3);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Syne', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(47,123,229,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(47,123,229,0.05) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bg-glow {
+  position: fixed;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(47,123,229,0.08) 0%, transparent 60%);
+  top: -200px; right: -100px;
+  pointer-events: none; z-index: 0;
+}
+.bg-glow2 {
+  position: fixed;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(0,201,167,0.06) 0%, transparent 60%);
+  bottom: -100px; left: -50px;
+  pointer-events: none; z-index: 0;
+}
+
+/* ── HEADER ── */
+header {
+  position: relative; z-index: 10;
+  padding: 32px 48px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.header-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--teal);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.header-tag::before { content: ''; width: 20px; height: 1px; background: var(--teal); }
+
+.header-title { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+.header-title span { color: var(--blue-light); }
+.header-sub { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text3); margin-top: 6px; }
+
+.header-right { text-align: right; }
+.profile-name { font-size: 14px; font-weight: 700; color: var(--text2); }
+.profile-role { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); margin-top: 2px; }
+.back-link {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--text3);
+  text-decoration: none;
+  display: block;
+  margin-top: 6px;
+  transition: color 0.2s;
+}
+.back-link:hover { color: var(--text2); }
+
+/* ── MAIN ── */
+main {
+  position: relative; z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 48px 80px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+
+/* ── PANELS ── */
+.panel {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.panel-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.panel-icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+}
+.pi-blue { background: rgba(47,123,229,0.15); }
+.pi-teal { background: rgba(0,201,167,0.12); }
+.pi-amber { background: rgba(245,166,35,0.12); }
+
+.panel-title { font-size: 14px; font-weight: 700; color: var(--text); }
+.panel-subtitle { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); margin-top: 1px; }
+
+/* ── INPUT PANEL ── */
+.input-panel { grid-column: 1 / -1; }
+
+.jd-textarea {
+  width: 100%;
+  min-height: 200px;
+  background: transparent;
+  border: none; outline: none;
+  resize: vertical;
+  padding: 20px 24px;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.75;
+  display: block;
+}
+.jd-textarea::placeholder { color: var(--text3); }
+
+.input-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.char-count { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); }
+
+.analyze-btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px; font-weight: 500;
+  padding: 10px 28px;
+  background: var(--blue);
+  color: #fff; border: none;
+  border-radius: 8px; cursor: pointer;
+  letter-spacing: 0.06em;
+  transition: all 0.2s;
+  display: flex; align-items: center; gap: 8px;
+}
+.analyze-btn:hover:not(:disabled) { background: var(--blue-light); transform: translateY(-1px); }
+.analyze-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+.btn-spinner {
+  width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: none;
+}
+.btn-spinner.active { display: block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── RESULTS ── */
+.result-area { display: contents; }
+.result-area.hidden { display: none; }
+
+.winner-panel { grid-column: 1 / -1; background: rgba(47,123,229,0.06); border-color: var(--border-blue); }
+.winner-body { padding: 24px; }
+.winner-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+.winner-badge {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--blue-light); padding: 4px 10px;
+  border: 1px solid var(--border-blue);
+  border-radius: 20px; background: rgba(47,123,229,0.1);
+}
+.winner-file {
+  font-family: 'DM Mono', monospace; font-size: 12px;
+  color: var(--text3); padding: 4px 12px;
+  background: var(--bg3); border-radius: 4px; border: 1px solid var(--border);
+}
+.winner-name { font-size: 32px; font-weight: 800; color: var(--text); letter-spacing: -0.02em; margin-bottom: 12px; }
+.winner-reason { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--text2); line-height: 1.8; }
+
+/* Scores */
+.scores-body { padding: 20px 24px; }
+.score-row { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+.score-row:last-child { margin-bottom: 0; }
+.score-role { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text2); width: 140px; flex-shrink: 0; }
+.score-bar-wrap { flex: 1; height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+.score-bar-fill { height: 100%; border-radius: 3px; transition: width 0.8s cubic-bezier(0.4,0,0.2,1); width: 0%; }
+.score-val { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; width: 36px; text-align: right; flex-shrink: 0; }
+
+/* Tweaks */
+.tweaks-body { padding: 20px 24px; }
+.tweak-item { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.tweak-item:last-child { border-bottom: none; }
+.tweak-num { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--blue); width: 20px; flex-shrink: 0; padding-top: 1px; }
+.tweak-text { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text2); line-height: 1.75; }
+
+/* Full-width panels */
+.full-panel { grid-column: 1 / -1; }
+.custom-body { padding: 20px 24px; }
+.custom-desc { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--text2); line-height: 1.8; margin-bottom: 20px; }
+
+.custom-btn {
+  font-family: 'DM Mono', monospace; font-size: 13px;
+  padding: 12px 28px;
+  border: 1px solid var(--border-blue);
+  color: var(--blue-light);
+  background: rgba(47,123,229,0.08);
+  border-radius: 8px; cursor: pointer;
+  letter-spacing: 0.06em;
+  transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.custom-btn:hover:not(:disabled) { background: rgba(47,123,229,0.16); transform: translateY(-1px); }
+.custom-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.custom-result { margin-top: 20px; display: none; }
+.custom-result.visible { display: block; }
+
+.custom-output {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px; color: var(--text2);
+  line-height: 1.9; white-space: pre-wrap;
+  max-height: 400px; overflow-y: auto;
+}
+
+.copy-btn {
+  margin-top: 12px;
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  padding: 7px 16px;
+  border: 1px solid var(--border);
+  color: var(--text3); background: transparent;
+  border-radius: 6px; cursor: pointer;
+  letter-spacing: 0.06em; transition: all 0.2s;
+}
+.copy-btn:hover { border-color: var(--blue); color: var(--text2); }
+
+/* Email */
+.email-inputs { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+.email-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 7px; }
+.email-input {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 6px; padding: 10px 14px;
+  font-family: 'DM Mono', monospace; font-size: 12px;
+  color: var(--text2); outline: none; transition: border-color 0.2s;
+}
+.email-input:focus { border-color: var(--blue); }
+.email-input::placeholder { color: var(--text3); }
+
+.email-type-row { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; flex-wrap: wrap; }
+.email-type-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; }
+.email-type-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.type-btn {
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  padding: 6px 16px; border-radius: 20px;
+  border: 1px solid var(--border);
+  background: transparent; color: var(--text3);
+  cursor: pointer; letter-spacing: 0.05em; transition: all 0.2s;
+}
+.type-btn:hover { border-color: var(--blue); color: var(--text2); }
+.type-btn.active { border-color: var(--teal); color: var(--teal); background: rgba(0,201,167,0.08); }
+
+.email-subject-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+.email-subject-box {
+  background: var(--bg3); border: 1px solid var(--border-blue);
+  border-radius: 6px; padding: 12px 16px;
+  font-family: 'DM Mono', monospace; font-size: 13px;
+  color: var(--blue-light); margin-bottom: 8px; line-height: 1.5;
+}
+
+/* Empty & Error */
+.empty-state { grid-column: 1/-1; text-align: center; padding: 48px 24px; }
+.empty-icon { font-size: 40px; margin-bottom: 16px; opacity: 0.3; }
+.empty-text { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--text3); line-height: 1.7; }
+
+.error-msg {
+  grid-column: 1/-1; padding: 20px 24px;
+  background: rgba(245,99,66,0.08);
+  border: 1px solid rgba(245,99,66,0.2);
+  border-radius: 12px;
+  font-family: 'DM Mono', monospace; font-size: 13px; color: #F56342;
+  display: none;
+}
+.error-msg.visible { display: block; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--text3); border-radius: 3px; }
+
+@media (max-width: 768px) {
+  header { padding: 24px 20px 0; flex-direction: column; gap: 16px; }
+  main { padding: 24px 20px 60px; grid-template-columns: 1fr; }
+  .winner-panel, .full-panel { grid-column: 1; }
+  .winner-name { font-size: 24px; }
+  .email-inputs { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+<div class="bg-glow2"></div>
+
+<header>
+  <div class="header-left">
+    <div class="header-tag">Resume Intelligence Tool</div>
+    <div class="header-title">JD <span>Matcher</span></div>
+    <div class="header-sub">Paste any job description → get the right resume instantly</div>
+  </div>
+  <div class="header-right">
+    <div class="profile-name">Mayur Goyal</div>
+    <div class="profile-role">Data Analyst · Delhi NCR</div>
+    <a href="/" class="back-link">← Back to Portfolio</a>
+  </div>
+</header>
+
+<main>
+
+  <!-- INPUT -->
+  <div class="panel input-panel">
+    <div class="panel-header">
+      <div class="panel-icon pi-blue">📋</div>
+      <div>
+        <div class="panel-title">Job Description</div>
+        <div class="panel-subtitle">Paste the full JD — more detail = better match</div>
+      </div>
+    </div>
+    <textarea class="jd-textarea" id="jdInput"
+      placeholder="Paste the full job description here...&#10;&#10;Include: job title, responsibilities, required skills, tools — everything helps."
+      oninput="updateCount()"></textarea>
+    <div class="input-footer">
+      <span class="char-count" id="charCount">0 characters</span>
+      <button class="analyze-btn" id="analyzeBtn" onclick="analyze()" disabled>
+        <span class="btn-spinner" id="spinner"></span>
+        <span id="btnText">Analyze JD →</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- EMPTY STATE -->
+  <div class="empty-state" id="emptyState">
+    <div class="empty-icon">🎯</div>
+    <div class="empty-text">
+      Paste a job description above and hit Analyze.<br>
+      Results appear here — which resume to use,<br>
+      match scores, and specific tweaks to make.
+    </div>
+  </div>
+
+  <!-- ERROR -->
+  <div class="error-msg" id="errorMsg"></div>
+
+  <!-- RESULTS -->
+  <div class="result-area hidden" id="resultArea">
+
+    <!-- Winner -->
+    <div class="panel winner-panel">
+      <div class="panel-header">
+        <div class="panel-icon pi-blue">🏆</div>
+        <div>
+          <div class="panel-title">Best Match Resume</div>
+          <div class="panel-subtitle">Upload this version for this role</div>
+        </div>
+      </div>
+      <div class="winner-body">
+        <div class="winner-top">
+          <span class="winner-badge">Recommended</span>
+          <span class="winner-file" id="winnerFile">—</span>
+        </div>
+        <div class="winner-name" id="winnerName">—</div>
+        <div class="winner-reason" id="winnerReason">—</div>
+      </div>
+    </div>
+
+    <!-- Scores -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-icon pi-teal">📊</div>
+        <div>
+          <div class="panel-title">Match Scores</div>
+          <div class="panel-subtitle">How well each variant fits this JD</div>
+        </div>
+      </div>
+      <div class="scores-body" id="scoresBody"></div>
+    </div>
+
+    <!-- Tweaks -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-icon pi-amber">✏️</div>
+        <div>
+          <div class="panel-title">Suggested Tweaks</div>
+          <div class="panel-subtitle">Make these edits before applying</div>
+        </div>
+      </div>
+      <div class="tweaks-body" id="tweaksBody"></div>
+    </div>
+
+    <!-- Custom Resume -->
+    <div class="panel full-panel">
+      <div class="panel-header">
+        <div class="panel-icon pi-blue">⚡</div>
+        <div>
+          <div class="panel-title">Generate Custom Resume</div>
+          <div class="panel-subtitle">Full resume rewritten for this exact JD</div>
+        </div>
+      </div>
+      <div class="custom-body">
+        <p class="custom-desc">None of the 4 variants feel right? Generate a fully tailored resume where every bullet and skill is optimized for this exact JD. Copy and paste into Word.</p>
+        <button class="custom-btn" id="customBtn" onclick="generateCustom()" disabled>
+          <span class="btn-spinner" id="customSpinner"></span>
+          <span id="customBtnText">Generate Tailored Resume →</span>
+        </button>
+        <div class="custom-result" id="customResult">
+          <div class="custom-output" id="customOutput"></div>
+          <button class="copy-btn" onclick="copyText('customOutput', this)">Copy to clipboard</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Email Generator -->
+    <div class="panel full-panel">
+      <div class="panel-header">
+        <div class="panel-icon pi-teal">✉️</div>
+        <div>
+          <div class="panel-title">Generate Application Email</div>
+          <div class="panel-subtitle">Ready-to-send email tailored to this JD</div>
+        </div>
+      </div>
+      <div class="custom-body">
+        <div class="email-inputs">
+          <div>
+            <label class="email-label">Hiring Manager / HR Name</label>
+            <input class="email-input" id="hrName" type="text" placeholder="e.g. Priya Sharma (or leave blank)">
+          </div>
+          <div>
+            <label class="email-label">Company Name</label>
+            <input class="email-input" id="companyName" type="text" placeholder="e.g. Razorpay">
+          </div>
+          <div>
+            <label class="email-label">Job Portal / Source</label>
+            <input class="email-input" id="jobSource" type="text" placeholder="e.g. Naukri, LinkedIn">
+          </div>
+        </div>
+        <div class="email-type-row">
+          <div class="email-type-label">Email Type:</div>
+          <div class="email-type-btns">
+            <button class="type-btn active" id="typeCold" onclick="setEmailType('cold')">Cold Application</button>
+            <button class="type-btn" id="typeReferral" onclick="setEmailType('referral')">Referral</button>
+            <button class="type-btn" id="typeFollowup" onclick="setEmailType('followup')">Follow-up</button>
+          </div>
+        </div>
+        <button class="custom-btn" id="emailBtn" onclick="generateEmail()" disabled>
+          <span class="btn-spinner" id="emailSpinner"></span>
+          <span id="emailBtnText">Generate Email →</span>
+        </button>
+        <div class="custom-result" id="emailResult">
+          <div class="email-subject-label">Subject Line</div>
+          <div class="email-subject-box" id="emailSubject"></div>
+          <button class="copy-btn" onclick="copyEl('emailSubject', this)">Copy subject</button>
+          <div class="email-subject-label" style="margin-top:16px;">Email Body</div>
+          <div class="custom-output" id="emailOutput"></div>
+          <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;">
+            <button class="copy-btn" onclick="copyEl('emailOutput', this)">Copy body</button>
+            <button class="copy-btn" onclick="copyBoth(this)">Copy subject + body</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end resultArea -->
+</main>
+
+<script>
+// ── PROFILE ───────────────────────────────────────────────────────
+const PROFILE = `
+CANDIDATE: Mayur Goyal
+Location: Agra / Delhi NCR
+Education: B.Tech Computer Science, Anand Engineering College Agra, 2020-2024
+
+EXPERIENCE: Operations Associate – Merchant Data & Compliance
+Company: Pixeltruth (Payment compliance intermediary between aggregators and merchants)
+Duration: Nov 2024 – Mar 2026 (1.5 years)
+
+Responsibilities:
+- Processed merchant website batches from 1 to 100,000+ URLs per cycle — analyzing for product/service category, business type, policy compliance, and data accuracy
+- Applied MCC (Merchant Category Code) classification to categorize merchants for payment aggregator reporting — directly influencing onboarding approval decisions
+- Conducted multi-level website audits capturing contact details, refund/privacy/T&C policies, and website completeness flags
+- Built automated Excel dashboards tracking merchant review pipelines, data quality scores, and TAT metrics — reducing manual reporting effort by 30%
+- Reduced reporting inconsistencies by 25% by redesigning data validation workflows
+- Improved reporting turnaround time by 20% through process optimization
+
+SKILLS:
+SQL (Joins, Aggregations, Window Functions, CTEs, Recursive CTEs, Subqueries), Power BI (DAX, Data Modeling), Excel (Advanced Functions, Pivot Tables, Macros, Automation), Python (Pandas, NumPy), MySQL, Statistics, Data Cleaning, Business Analysis, MIS Reporting, Dashboard Development, Data Validation
+
+PROJECTS:
+1. Music Store Business Analysis (SQL/MySQL) — 11 queries on 11-table DB, CTEs, recursive CTEs, ROW_NUMBER() PARTITION BY, 6-table JOINs
+2. ICC T20 WC 2024 (Power BI, DAX) — role-based player segmentation, interactive Final XI selector, 50+ matches
+3. Customer Spending & Revenue Segmentation (Power BI, DAX) — 656K+ transactions, $57M revenue, Blue cards drive 83% of revenue
+
+RESUME VARIANTS:
+1. Data Analyst (Resume_Mayur_DataAnalyst.pdf) — SQL/Python/Power BI focus, data insights
+2. Business Analyst (Resume_Mayur_BusinessAnalyst.pdf) — process improvement, stakeholder impact
+3. MIS Analyst (Resume_Mayur_MISAnalyst.pdf) — Excel automation, MIS reporting, TAT tracking
+4. Operations Analyst (Resume_Mayur_OperationsAnalyst.pdf) — merchant onboarding, SLA tracking, workflow optimization
+`;
+
+const SCORE_COLORS = {
+  'Data Analyst': '#2F7BE5',
+  'Business Analyst': '#00C9A7',
+  'MIS Analyst': '#F5A623',
+  'Operations Analyst': '#A78BFA'
+};
+
+let lastJD = '';
+let emailType = 'cold';
+
+// ── HELPERS ───────────────────────────────────────────────────────
+function updateCount() {
+  const val = document.getElementById('jdInput').value;
+  lastJD = val;
+  document.getElementById('charCount').textContent = `${val.length} characters`;
+  document.getElementById('analyzeBtn').disabled = val.length < 80;
+}
+
+function setLoading(id, loading, defaultText) {
+  const btn = document.getElementById(id + 'Btn');
+  const spinner = document.getElementById(id + 'Spinner');
+  const text = document.getElementById(id + 'BtnText');
+  if (btn) btn.disabled = loading;
+  if (spinner) spinner.className = loading ? 'btn-spinner active' : 'btn-spinner';
+  if (text) text.textContent = loading ? 'Generating...' : defaultText;
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = '⚠ ' + msg;
+  el.classList.add('visible');
+  document.getElementById('emptyState').style.display = 'none';
+}
+
+function hideError() {
+  document.getElementById('errorMsg').classList.remove('visible');
+}
+
+function setEmailType(type) {
+  emailType = type;
+  ['cold','referral','followup'].forEach(t => {
+    const id = 'type' + t.charAt(0).toUpperCase() + t.slice(1);
+    document.getElementById(id)?.classList.toggle('active', t === type);
+  });
+}
+
+// ── API CALL (goes through /api/analyze proxy) ────────────────────
+async function callAPI(messages, max_tokens = 1000) {
+  const res = await fetch('/api/analyze', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ messages, max_tokens })
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || `HTTP ${res.status}`);
+  }
+  const data = await res.json();
+  return data.content[0].text;
+}
+
+// ── ANALYZE ───────────────────────────────────────────────────────
+async function analyze() {
+  const jd = lastJD.trim();
+  if (jd.length < 80) return;
+
+  hideError();
+  setLoading('analyze', true, 'Analyze JD →');
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('resultArea').classList.add('hidden');
+  document.getElementById('customResult').classList.remove('visible');
+  document.getElementById('emailResult').classList.remove('visible');
+
+  const prompt = `You are an expert resume advisor. Analyze this job description against the candidate profile and return ONLY valid JSON — no markdown, no backticks, no explanation.
+
+CANDIDATE PROFILE:
+${PROFILE}
+
+JOB DESCRIPTION:
+${jd}
+
+Return this exact JSON:
+{
+  "winner": "Data Analyst" | "Business Analyst" | "MIS Analyst" | "Operations Analyst",
+  "winnerFile": "Resume_Mayur_DataAnalyst.pdf" | "Resume_Mayur_BusinessAnalyst.pdf" | "Resume_Mayur_MISAnalyst.pdf" | "Resume_Mayur_OperationsAnalyst.pdf",
+  "winnerReason": "2-3 sentences explaining why this resume fits best for this specific JD",
+  "scores": { "Data Analyst": 0-100, "Business Analyst": 0-100, "MIS Analyst": 0-100, "Operations Analyst": 0-100 },
+  "tweaks": ["Specific tweak 1", "Specific tweak 2", "Specific tweak 3", "Specific tweak 4"]
+}
+
+Base scores on keyword overlap, role type match, required skills, domain relevance. Tweaks must mention exact JD keywords or specific bullet changes.`;
+
+  try {
+    const text = await callAPI([{ role: 'user', content: prompt }]);
+    const parsed = JSON.parse(text.replace(/```json|```/g, '').trim());
+    renderResults(parsed);
+  } catch(e) {
+    showError('Analysis failed. Please try again. (' + e.message + ')');
+    console.error(e);
+  } finally {
+    setLoading('analyze', false, 'Analyze JD →');
+    document.getElementById('analyzeBtn').disabled = false;
+  }
+}
+
+// ── RENDER ────────────────────────────────────────────────────────
+function renderResults(d) {
+  document.getElementById('winnerName').textContent = d.winner + ' Resume';
+  document.getElementById('winnerFile').textContent = d.winnerFile;
+  document.getElementById('winnerReason').textContent = d.winnerReason;
+
+  const scoresBody = document.getElementById('scoresBody');
+  scoresBody.innerHTML = '';
+  Object.entries(d.scores).forEach(([role, score]) => {
+    const color = SCORE_COLORS[role] || '#2F7BE5';
+    const row = document.createElement('div');
+    row.className = 'score-row';
+    row.innerHTML = `
+      <div class="score-role">${role}</div>
+      <div class="score-bar-wrap"><div class="score-bar-fill" style="background:${color}" data-width="${score}"></div></div>
+      <div class="score-val" style="color:${color}">${score}%</div>`;
+    scoresBody.appendChild(row);
+  });
+
+  const tweaksBody = document.getElementById('tweaksBody');
+  tweaksBody.innerHTML = '';
+  d.tweaks.forEach((t, i) => {
+    const item = document.createElement('div');
+    item.className = 'tweak-item';
+    item.innerHTML = `<div class="tweak-num">0${i+1}</div><div class="tweak-text">${t}</div>`;
+    tweaksBody.appendChild(item);
+  });
+
+  document.getElementById('resultArea').classList.remove('hidden');
+  document.getElementById('customBtn').disabled = false;
+  document.getElementById('emailBtn').disabled = false;
+
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      document.querySelectorAll('.score-bar-fill').forEach(b => b.style.width = b.dataset.width + '%');
+    }, 100);
+  });
+
+  document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── CUSTOM RESUME ─────────────────────────────────────────────────
+async function generateCustom() {
+  setLoading('custom', true, 'Generate Tailored Resume →');
+
+  const prompt = `You are an expert resume writer. Create a fully tailored ATS-optimized resume for this candidate for this specific JD.
+
+CANDIDATE PROFILE:
+${PROFILE}
+
+JOB DESCRIPTION:
+${lastJD}
+
+Write a complete resume in plain text with these sections:
+PROFILE / SKILLS / EXPERIENCE / PROJECTS / EDUCATION
+
+Rules: strong action verbs, real metrics, mirror JD keywords naturally, bullets under 2 lines, no invented experience.`;
+
+  try {
+    const text = await callAPI([{ role: 'user', content: prompt }], 2000);
+    document.getElementById('customOutput').textContent = text.trim();
+    document.getElementById('customResult').classList.add('visible');
+    document.getElementById('customResult').scrollIntoView({ behavior: 'smooth' });
+  } catch(e) {
+    showError('Resume generation failed. Try again.');
+  } finally {
+    setLoading('custom', false, 'Generate Tailored Resume →');
+    document.getElementById('customBtn').disabled = false;
+  }
+}
+
+// ── EMAIL ─────────────────────────────────────────────────────────
+async function generateEmail() {
+  setLoading('email', true, 'Generate Email →');
+
+  const hr = document.getElementById('hrName').value.trim() || 'Hiring Manager';
+  const company = document.getElementById('companyName').value.trim() || 'your company';
+  const source = document.getElementById('jobSource').value.trim() || 'job portal';
+
+  const typeMap = {
+    cold: 'COLD APPLICATION — professional direct outreach, no prior contact. Confident, concise, specific.',
+    referral: 'REFERRAL — candidate reached out through a known contact. Warm, personal, confident. Mention referral naturally.',
+    followup: 'FOLLOW-UP — candidate already applied, following up after 5-7 days. Polite, persistent, professional.'
+  };
+
+  const prompt = `Write a professional job application email. Return ONLY valid JSON, no markdown, no backticks.
+
+CANDIDATE PROFILE:
+${PROFILE}
+
+JOB DESCRIPTION:
+${lastJD}
+
+EMAIL CONTEXT:
+- Hiring Manager: ${hr}
+- Company: ${company}
+- Found via: ${source}
+- Type: ${typeMap[emailType]}
+
+Rules: Para 1 = who you are + role + source. Para 2 = why you for THIS role, mention payments/merchant domain + 1-2 real metrics. Para 3 = one relevant project mapped to their needs. Closing = CTA + resume attached. Sign-off with name, phone, email, portfolio, LinkedIn. Under 250 words. No clichés like "I am writing to express my interest".
+
+Return: { "subject": "...", "body": "..." }`;
+
+  try {
+    const text = await callAPI([{ role: 'user', content: prompt }], 1200);
+    const parsed = JSON.parse(text.replace(/```json|```/g, '').trim());
+    document.getElementById('emailSubject').textContent = parsed.subject;
+    document.getElementById('emailOutput').textContent = parsed.body;
+    document.getElementById('emailResult').classList.add('visible');
+    document.getElementById('emailResult').scrollIntoView({ behavior: 'smooth' });
+  } catch(e) {
+    showError('Email generation failed. Try again.');
+  } finally {
+    setLoading('email', false, 'Generate Email →');
+    document.getElementById('emailBtn').disabled = false;
+  }
+}
+
+// ── COPY HELPERS ──────────────────────────────────────────────────
+function copyText(id, btn) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied ✓';
+    setTimeout(() => btn.textContent = orig, 2000);
+  });
+}
+
+function copyEl(id, btn) { copyText(id, btn); }
+
+function copyBoth(btn) {
+  const subject = document.getElementById('emailSubject').textContent;
+  const body = document.getElementById('emailOutput').textContent;
+  navigator.clipboard.writeText(`Subject: ${subject}\n\n${body}`).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied ✓';
+    setTimeout(() => btn.textContent = orig, 2000);
+  });
+}
+
+// Ctrl+Enter shortcut
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('jdInput').addEventListener('keydown', e => {
+    if (e.ctrlKey && e.key === 'Enter') analyze();
+  });
+});
+</script>
+</body>
+</html>
