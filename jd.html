@@ -420,32 +420,121 @@ async function generateEmail(){
   const hr=document.getElementById('hrName').value.trim()||'Hiring Manager';
   const company=document.getElementById('companyName').value.trim()||'your company';
   const source=document.getElementById('jobSource').value.trim()||'job portal';
-  const typeMap={cold:'COLD APPLICATION — professional direct outreach, confident and specific.',referral:'REFERRAL — warm and personal, mention referral naturally.',followup:'FOLLOW-UP — polite nudge after 5-7 days of no response.'};
-  const prompt=`Write a job application email and return ONLY a JSON object with no markdown.
-CANDIDATE PROFILE:\n${PROFILE}\nJOB DESCRIPTION:\n${lastJD}
-CONTEXT: Recipient: ${hr}, Company: ${company}, Source: ${source}, Type: ${typeMap[emailType]}
-Rules: Para1=who you are+role+source. Para2=why YOU for THIS role, mention payments/merchant data + real metrics. Para3=one relevant project mapped to their needs. Closing=CTA+resume attached. Signoff=name,phone,email,portfolio mg67.vercel.app,LinkedIn linkedin.com/in/mg67. Under 250 words. No cliches.
-Return exactly: {"subject":"...","body":"..."}`;
+  const typeMap={
+    cold:'COLD APPLICATION — professional direct outreach, confident and specific.',
+    referral:'REFERRAL — warm and personal, mention referral naturally.',
+    followup:'FOLLOW-UP — polite nudge after 5-7 days of no response.'
+  };
+
+  // Fixed contact details — always use these exactly, never change them
+  const CONTACT = {
+    name: 'Mayur Goyal',
+    phone: '+91-7300585887',
+    email: 'goyalmayur644@gmail.com',
+    portfolio: 'https://mg67.vercel.app',
+    linkedin: 'https://www.linkedin.com/in/mg67'
+  };
+
+  const prompt = `Write a professional job application email. Return ONLY valid JSON with no markdown.
+
+JOB DESCRIPTION:
+${lastJD}
+
+CANDIDATE PROFILE:
+${PROFILE}
+
+CONTEXT:
+- Recipient: ${hr}
+- Company: ${company}
+- Found via: ${source}
+- Email type: ${typeMap[emailType]}
+
+STRICT RULES FOR BODY STRUCTURE — follow this exact format with blank lines between each section:
+1. Greeting line: "Dear ${hr},"
+2. Blank line
+3. Opening paragraph (2 sentences): who you are + role you are applying for + where you found it
+4. Blank line
+5. Why you paragraph (2-3 sentences): connect your payments/merchant data compliance experience directly to what this JD needs. Mention at least one real metric (100K+ URLs, 30% efficiency improvement, 25% error reduction, or 20% TAT improvement).
+6. Blank line
+7. Project paragraph (2 sentences): mention ONE relevant project from your portfolio that maps to their needs
+8. Blank line
+9. Closing (1-2 sentences): request for interview/call. Mention resume is attached.
+10. Blank line
+11. Sign-off — use EXACTLY this, do not change any detail:
+Best regards,
+Mayur Goyal
++91-7300585887
+goyalmayur644@gmail.com
+https://mg67.vercel.app
+https://www.linkedin.com/in/mg67
+
+IMPORTANT:
+- Use \n for line breaks between every paragraph and section
+- Never merge paragraphs together
+- Never change the contact details in the sign-off
+- Under 220 words for the full body
+- No clichés like "I am writing to express my interest" or "I believe I would be a great fit"
+
+Return exactly this JSON: {"subject": "one line subject", "body": "full email with \n line breaks"}`;
+
   try{
-    const text=await callAPI(prompt,1200);
-    const parsed=extractJSON(text);
-    document.getElementById('emailSubject').textContent=parsed.subject;
-    document.getElementById('emailOutput').textContent=parsed.body;
+    const text = await callAPI(prompt, 1400);
+    const parsed = extractJSON(text);
+
+    document.getElementById('emailSubject').textContent = parsed.subject;
+
+    // Render body with proper line breaks — replace \n with actual newlines
+    const emailEl = document.getElementById('emailOutput');
+    emailEl.textContent = '';
+    const lines = parsed.body.split('\n');
+    lines.forEach((line, i) => {
+      if(line.trim() === '') {
+        emailEl.appendChild(document.createElement('br'));
+      } else {
+        const p = document.createElement('p');
+        p.style.margin = '0 0 8px 0';
+        p.style.fontFamily = 'DM Mono, monospace';
+        p.style.fontSize = '12px';
+        p.style.color = 'var(--text2)';
+        p.style.lineHeight = '1.75';
+        p.textContent = line;
+        emailEl.appendChild(p);
+      }
+    });
+
     document.getElementById('emailResult').classList.add('visible');
     document.getElementById('emailResult').scrollIntoView({behavior:'smooth'});
   }catch(e){showError('Email generation failed: '+e.message);}
   finally{setLoading('email',false,'Generate Email →');document.getElementById('emailBtn').disabled=false;}
 }
 
+function getEmailText() {
+  const el = document.getElementById('emailOutput');
+  // Collect text from paragraph elements with proper line breaks
+  const children = el.childNodes;
+  let text = '';
+  children.forEach(node => {
+    if(node.nodeName === 'BR') {
+      text += '\n';
+    } else if(node.nodeName === 'P') {
+      text += node.textContent + '\n';
+    } else {
+      text += node.textContent;
+    }
+  });
+  return text.trim();
+}
+
 function copyEl(id,btn){
-  navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>{
+  const text = id === 'emailOutput' ? getEmailText() : document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(()=>{
     const orig=btn.textContent;btn.textContent='Copied ✓';setTimeout(()=>btn.textContent=orig,2000);
   });
 }
 
 function copyBoth(btn){
   const s=document.getElementById('emailSubject').textContent;
-  const b=document.getElementById('emailOutput').textContent;
+  const b=getEmailText();
   navigator.clipboard.writeText('Subject: '+s+'\n\n'+b).then(()=>{
     const orig=btn.textContent;btn.textContent='Copied ✓';setTimeout(()=>btn.textContent=orig,2000);
   });
