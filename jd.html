@@ -310,19 +310,41 @@ function extractJSON(text){
   var s=c.indexOf("{"),e=c.lastIndexOf("}");
   if(s===-1||e===-1)throw new Error("No JSON in response");
   c=c.slice(s,e+1);
+
+  // Try 1: direct parse
+  try{return JSON.parse(c);}catch(_){}
+
+  // Try 2: clean up common issues — trailing commas, raw newlines in strings
   var fixed="";
-  var depth=0,inStr=false,esc=false;
+  var inStr=false,esc=false;
   for(var i=0;i<c.length;i++){
     var ch=c[i];
     if(esc){fixed+=ch;esc=false;continue;}
     if(ch==="\\"){fixed+=ch;esc=true;continue;}
-    if(ch==="\""){inStr=!inStr;fixed+=ch;continue;}
-    if(inStr){if(ch==="\n"||ch==="\r")fixed+=" ";else fixed+=ch;continue;}
+    if(ch==='"'){inStr=!inStr;fixed+=ch;continue;}
+    if(inStr&&(ch==="\n"||ch==="\r")){fixed+=" ";continue;}
     fixed+=ch;
   }
-  fixed=fixed.replace(/,[ \t\r\n]*([}\]])/g,"$1");
-  try{return JSON.parse(fixed);}
-  catch(e){throw new Error("Parse error: "+e.message);}
+  fixed=fixed.replace(/,\s*([}\]])/g,"$1");
+  try{return JSON.parse(fixed);}catch(_){}
+
+  // Try 3: regex fallback — pull out key fields one by one
+  var winnerM=c.match(/"winner"\s*:\s*"([^"]+)"/);
+  var fileM=c.match(/"winnerFile"\s*:\s*"([^"]+)"/);
+  var reasonM=c.match(/"winnerReason"\s*:\s*"([^"]+)"/);
+  var scoresM=c.match(/"scores"\s*:\s*({[^}]+})/);
+  var sc={"Data Analyst":60,"Business Analyst":60,"MIS Analyst":60,"Operations Analyst":60};
+  if(scoresM){try{sc=JSON.parse(scoresM[1]);}catch(_){}}
+  if(winnerM){
+    return{
+      winner:winnerM[1],
+      winnerFile:fileM?fileM[1]:"Resume_Mayur_DataAnalyst.pdf",
+      winnerReason:reasonM?reasonM[1]:"Best match for this role based on your skills.",
+      scores:sc,
+      tweaks:["Mirror JD keywords in your summary","Highlight relevant metrics from your experience","Emphasise matching technical skills","Tailor project descriptions to this role"]
+    };
+  }
+  throw new Error("Could not parse response — please try again.");
 }
 
 async function analyze(){
@@ -335,8 +357,13 @@ async function analyze(){
   document.getElementById('customResult').classList.remove('visible');
   document.getElementById('emailResult').classList.remove('visible');
 
-  const prompt=`You are an expert resume advisor. Analyze this job description against the candidate profile.
-Return ONLY a valid JSON object with no markdown, no backticks, no text before or after.
+  const prompt=`You are an expert resume advisor. Analyze this job description and pick the BEST matching resume variant from the 4 options below. Be objective — do NOT default to Data Analyst. Read the JD carefully and match the role title, required skills, and responsibilities to the most relevant resume variant.
+
+RESUME VARIANT SELECTION RULES:
+- Choose "MIS Analyst" if JD mentions: MIS, MIS reports, MIS Executive, dashboards, Excel reporting, pivot tables, data reporting, Excel-heavy roles
+- Choose "Business Analyst" if JD mentions: BA, business analyst, requirements gathering, stakeholder management, process improvement, business process, Agile, BRD, FRD, user stories, gap analysis
+- Choose "Operations Analyst" if JD mentions: operations, ops, process ops, compliance, merchant, payment ops, logistics ops, vendor management, process improvement in operations
+- Choose "Data Analyst" ONLY if JD strongly focuses on: SQL, Python, statistical analysis, machine learning, data science, data pipelines, BI tools, data visualization, insights
 
 CANDIDATE PROFILE:
 ${PROFILE}
@@ -344,20 +371,29 @@ ${PROFILE}
 JOB DESCRIPTION:
 ${jd}
 
-Return exactly this JSON:
-{"winner":"Data Analyst","winnerFile":"Resume_Mayur_DataAnalyst.pdf","winnerReason":"2-3 sentences why this resume fits","scores":{"Data Analyst":85,"Business Analyst":60,"MIS Analyst":70,"Operations Analyst":55},"tweaks":["Specific tweak 1","Specific tweak 2","Specific tweak 3","Specific tweak 4"]}
+Return ONLY a valid JSON object with no markdown, no backticks, no text before or after. Use this exact structure:
+{"winner":"MIS Analyst","winnerFile":"Resume_Mayur_MISAnalyst.pdf","winnerReason":"2-3 sentences explaining why this specific resume variant matches the JD keywords and requirements","scores":{"Data Analyst":55,"Business Analyst":60,"MIS Analyst":85,"Operations Analyst":65},"tweaks":["Specific tweak 1 using exact JD keywords","Specific tweak 2","Specific tweak 3","Specific tweak 4"]}
 
-winner must be one of: Data Analyst, Business Analyst, MIS Analyst, Operations Analyst.
-winnerFile must match winner.
-Scores 0-100 based on keyword overlap and role match.
-Tweaks must mention exact JD keywords. Keep each tweak under 12 words. Never use double quotes inside tweak text.`;
+IMPORTANT:
+- winner must be one of exactly: Data Analyst, Business Analyst, MIS Analyst, Operations Analyst
+- winnerFile values: Data Analyst → Resume_Mayur_DataAnalyst.pdf, Business Analyst → Resume_Mayur_BusinessAnalyst.pdf, MIS Analyst → Resume_Mayur_MISAnalyst.pdf, Operations Analyst → Resume_Mayur_OperationsAnalyst.pdf
+- winnerFile must always match the winner exactly
+- Scores 0-100 based on keyword overlap. The winner must have the highest score.
+- Tweaks must reference exact keywords from the JD. Keep each under 12 words. Never use double quotes inside tweak text.`;
 
   try{
-    const text=await callAPI(prompt,800);
-    const parsed=extractJSON(text);
+    let text=await callAPI(prompt,900);
+    let parsed;
+    try{
+      parsed=extractJSON(text);
+    }catch(parseErr){
+      // Auto-retry once on parse failure
+      text=await callAPI(prompt,900);
+      parsed=extractJSON(text);
+    }
     renderResults(parsed);
   }catch(e){
-    showError('Analysis failed: '+e.message);
+    showError('Analysis failed. Please try again — '+e.message);
   }finally{
     setLoading('analyze',false,'Analyze JD →');
     document.getElementById('analyzeBtn').disabled=false;
@@ -449,33 +485,34 @@ CONTEXT:
 - Found via: ${source}
 - Email type: ${typeMap[emailType]}
 
-STRICT RULES FOR BODY STRUCTURE — follow this exact format with blank lines between each section:
+STRICT RULES FOR BODY STRUCTURE — follow this exact format:
 1. Greeting line: "Dear ${hr},"
 2. Blank line
-3. Opening paragraph (2 sentences): who you are + role you are applying for + where you found it
+3. Opening paragraph (2 sentences): state the role you are applying for + where you found it + one line about who you are
 4. Blank line
-5. Why you paragraph (2-3 sentences): connect your payments/merchant data compliance experience directly to what this JD needs. Mention at least one real metric (100K+ URLs, 30% efficiency improvement, 25% error reduction, or 20% TAT improvement).
+5. Why you paragraph (2-3 sentences): connect your specific experience directly to what this JD needs. Mention at least one real metric (100K+ URLs processed, 30% reduction in manual reporting effort, 25% reduction in reporting inconsistencies, or 20% improvement in turnaround time).
 6. Blank line
-7. Project paragraph (2 sentences): mention ONE relevant project from your portfolio that maps to their needs
+7. Skills paragraph (1-2 sentences): mention your most relevant technical skills that match the JD keywords specifically
 8. Blank line
-9. Closing (1-2 sentences): request for interview/call. Mention resume is attached.
+9. Closing (1-2 sentences): express enthusiasm for the role, request for a call or interview, mention resume is attached.
 10. Blank line
-11. Sign-off — use EXACTLY this, do not change any detail:
+11. Sign-off — use EXACTLY this format with each item on its own line:
 Best regards,
 Mayur Goyal
-+91-7300585887
-goyalmayur644@gmail.com
-https://mg67.vercel.app
-https://www.linkedin.com/in/mg67
++91-7300585887 | goyalmayur644@gmail.com
+Portfolio: https://mg67.vercel.app
+LinkedIn: https://www.linkedin.com/in/mg67
 
 IMPORTANT:
-- Use \n for line breaks between every paragraph and section
+- Use \\n for line breaks between every paragraph and section
 - Never merge paragraphs together
 - Never change the contact details in the sign-off
 - Under 220 words for the full body
-- No clichés like "I am writing to express my interest" or "I believe I would be a great fit"
+- No clichés like "I am writing to express my interest" or "I believe I would be a great fit" or "I am excited to apply"
+- Start the opening paragraph directly with your name or the role, not with "I"
+- Keep the tone confident, direct, and professional
 
-Return exactly this JSON: {"subject": "one line subject", "body": "full email with \n line breaks"}`;
+Return exactly this JSON: {"subject": "Application for [Role Title] — Mayur Goyal | Immediate Joiner", "body": "full email with \\n line breaks"}`;
 
   try{
     const text = await callAPI(prompt, 1400);
