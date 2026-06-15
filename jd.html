@@ -92,6 +92,24 @@ main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:40px 48p
 .empty-state{grid-column:1/-1;text-align:center;padding:48px 24px;}
 .empty-icon{font-size:40px;margin-bottom:16px;opacity:0.3;}
 .empty-text{font-family:'DM Mono',monospace;font-size:13px;color:var(--text3);line-height:1.7;}
+
+.verdict-panel{grid-column:1/-1;}
+.verdict-body{padding:20px 24px;display:flex;align-items:flex-start;gap:16px;}
+.verdict-icon-wrap{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.verdict-yes{background:rgba(0,201,167,0.15);}
+.verdict-no{background:rgba(245,99,66,0.12);}
+.verdict-maybe{background:rgba(245,166,35,0.12);}
+.verdict-content{flex:1;}
+.verdict-decision{font-size:18px;font-weight:800;letter-spacing:-0.01em;margin-bottom:4px;}
+.verdict-yes-text{color:#00C9A7;}
+.verdict-no-text{color:#F56342;}
+.verdict-maybe-text{color:#F5A623;}
+.verdict-reason{font-family:'DM Mono',monospace;font-size:12px;color:var(--text2);line-height:1.7;}
+.verdict-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.verdict-tag{font-family:'DM Mono',monospace;font-size:11px;padding:3px 10px;border-radius:999px;border:1px solid;}
+.vtag-good{background:rgba(0,201,167,0.08);border-color:rgba(0,201,167,0.25);color:#00C9A7;}
+.vtag-bad{background:rgba(245,99,66,0.08);border-color:rgba(245,99,66,0.25);color:#F56342;}
+.vtag-neutral{background:rgba(139,151,176,0.08);border-color:rgba(139,151,176,0.2);color:var(--text2);}
 .error-msg{grid-column:1/-1;padding:20px 24px;background:rgba(245,99,66,0.08);border:1px solid rgba(245,99,66,0.2);border-radius:12px;font-family:'DM Mono',monospace;font-size:13px;color:#F56342;display:none;}
 .error-msg.visible{display:block;}
 ::-webkit-scrollbar{width:6px;}
@@ -145,6 +163,20 @@ main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:40px 48p
   </div>
   <div class="error-msg" id="errorMsg"></div>
   <div class="result-area hidden" id="resultArea">
+    <div class="panel verdict-panel" id="verdictPanel">
+      <div class="panel-header">
+        <div class="panel-icon pi-teal">🎯</div>
+        <div><div class="panel-title">Should You Apply?</div><div class="panel-subtitle">AI verdict based on your profile vs this JD</div></div>
+      </div>
+      <div class="verdict-body" id="verdictBody">
+        <div class="verdict-icon-wrap verdict-yes" id="verdictIconWrap"><span id="verdictEmoji">✓</span></div>
+        <div class="verdict-content">
+          <div class="verdict-decision verdict-yes-text" id="verdictDecision">—</div>
+          <div class="verdict-reason" id="verdictReason">—</div>
+          <div class="verdict-tags" id="verdictTags"></div>
+        </div>
+      </div>
+    </div>
     <div class="panel winner-panel">
       <div class="panel-header">
         <div class="panel-icon pi-blue">🏆</div>
@@ -372,7 +404,15 @@ JOB DESCRIPTION:
 ${jd}
 
 Return ONLY a valid JSON object with no markdown, no backticks, no text before or after. Use this exact structure:
-{"winner":"MIS Analyst","winnerFile":"Resume_Mayur_MISAnalyst.pdf","winnerReason":"2-3 sentences explaining why this specific resume variant matches the JD keywords and requirements","scores":{"Data Analyst":55,"Business Analyst":60,"MIS Analyst":85,"Operations Analyst":65},"tweaks":["Specific tweak 1 using exact JD keywords","Specific tweak 2","Specific tweak 3","Specific tweak 4"]}
+{"winner":"MIS Analyst","winnerFile":"Resume_Mayur_MISAnalyst.pdf","winnerReason":"2-3 sentences explaining why this specific resume variant matches the JD keywords and requirements","scores":{"Data Analyst":55,"Business Analyst":60,"MIS Analyst":85,"Operations Analyst":65},"tweaks":["Specific tweak 1 using exact JD keywords","Specific tweak 2","Specific tweak 3","Specific tweak 4"],"verdict":{"decision":"YES","reason":"2-3 sentences explaining why Mayur should or should not apply based on experience match, skill overlap, location, seniority level, and domain relevance","pros":["Pro 1","Pro 2"],"cons":["Con 1"]}}
+
+VERDICT RULES:
+- decision must be exactly one of: YES, NO, or MAYBE
+- YES: role matches experience level (0-3 yrs), skills overlap 60%+, location is Delhi NCR or remote, domain is relevant
+- NO: requires 3+ years experience, needs skills Mayur doesnt have (Tableau, Salesforce, ACCA, specific domain expertise), wrong location with no remote option, senior level role
+- MAYBE: partial match — some skills missing but learnable, slightly above experience, location negotiable
+- pros: 1-3 short reasons TO apply (under 8 words each)
+- cons: 1-2 short reasons NOT to apply (under 8 words each)
 
 IMPORTANT:
 - winner must be one of exactly: Data Analyst, Business Analyst, MIS Analyst, Operations Analyst
@@ -400,10 +440,59 @@ IMPORTANT:
   }
 }
 
+
+function renderVerdict(v){
+  if(!v||!v.decision)return;
+  var decision=v.decision.toUpperCase();
+  var iconWrap=document.getElementById('verdictIconWrap');
+  var emoji=document.getElementById('verdictEmoji');
+  var dec=document.getElementById('verdictDecision');
+  var reason=document.getElementById('verdictReason');
+  var tags=document.getElementById('verdictTags');
+
+  // Reset classes
+  iconWrap.className='verdict-icon-wrap';
+  dec.className='verdict-decision';
+
+  if(decision==='YES'){
+    iconWrap.classList.add('verdict-yes');
+    dec.classList.add('verdict-yes-text');
+    dec.textContent='✅ Yes — Apply to this role';
+    emoji.textContent='✓';
+  } else if(decision==='NO'){
+    iconWrap.classList.add('verdict-no');
+    dec.classList.add('verdict-no-text');
+    dec.textContent='❌ No — Skip this role';
+    emoji.textContent='✗';
+  } else {
+    iconWrap.classList.add('verdict-maybe');
+    dec.classList.add('verdict-maybe-text');
+    dec.textContent='⚠️ Maybe — Apply with caution';
+    emoji.textContent='?';
+  }
+
+  reason.textContent=v.reason||'';
+  tags.innerHTML='';
+
+  (v.pros||[]).forEach(function(p){
+    var t=document.createElement('span');
+    t.className='verdict-tag vtag-good';
+    t.textContent='+ '+p;
+    tags.appendChild(t);
+  });
+  (v.cons||[]).forEach(function(c){
+    var t=document.createElement('span');
+    t.className='verdict-tag vtag-bad';
+    t.textContent='− '+c;
+    tags.appendChild(t);
+  });
+}
+
 function renderResults(d){
   document.getElementById('winnerName').textContent=d.winner+' Resume';
   document.getElementById('winnerFile').textContent=d.winnerFile;
   document.getElementById('winnerReason').textContent=d.winnerReason;
+  renderVerdict(d.verdict);
 
   const sb=document.getElementById('scoresBody');
   sb.innerHTML='';
