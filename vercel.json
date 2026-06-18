@@ -9,6 +9,10 @@
       "dest": "/jd.html"
     },
     {
+      "src": "/jobs",
+      "dest": "/jobs.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/$1"
     }
