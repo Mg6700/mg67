@@ -4,233 +4,124 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Job Board — Mayur Goyal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root{--bg:#070A12;--bg2:#0C1020;--bg3:#111827;--blue:#2F7BE5;--blue-light:#5B9EF5;--teal:#00C9A7;--amber:#F5A623;--text:#EEF2FF;--text2:#8B97B0;--text3:#3D4A60;--border:rgba(255,255,255,0.07);--border-blue:rgba(47,123,229,0.3);}
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+    body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;overflow-x:hidden;}
+    body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(47,123,229,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(47,123,229,0.05) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;}
+    .bg-glow{position:fixed;width:600px;height:600px;background:radial-gradient(circle,rgba(47,123,229,0.08) 0%,transparent 60%);top:-200px;right:-100px;pointer-events:none;z-index:0;}
+    .bg-glow2{position:fixed;width:400px;height:400px;background:radial-gradient(circle,rgba(0,201,167,0.06) 0%,transparent 60%);bottom:-100px;left:-50px;pointer-events:none;z-index:0;}
 
-    :root {
-      --bg: #0a0a0a;
-      --surface: #111111;
-      --surface2: #1a1a1a;
-      --border: #2a2a2a;
-      --border2: #333333;
-      --text: #f0f0f0;
-      --muted: #888888;
-      --muted2: #555555;
-      --accent: #ffffff;
-      --badge-24h-bg: #1a2a3a;
-      --badge-24h: #5b9bd5;
-      --badge-live-bg: #1a2e1a;
-      --badge-live: #5dba5d;
-      --badge-top-bg: #2e2010;
-      --badge-top: #d4a04a;
-    }
+    header{position:relative;z-index:10;padding:32px 48px 0;display:flex;justify-content:space-between;align-items:flex-start;}
+    .header-tag{font-family:'DM Mono',monospace;font-size:11px;color:var(--teal);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+    .header-tag::before{content:'';width:20px;height:1px;background:var(--teal);}
+    .header-title{font-size:28px;font-weight:800;letter-spacing:-0.02em;line-height:1.1;}
+    .header-title span{color:var(--blue-light);}
+    .header-sub{font-family:'DM Mono',monospace;font-size:12px;color:var(--text3);margin-top:6px;}
+    .header-right{text-align:right;}
+    .profile-name{font-size:14px;font-weight:700;color:var(--text2);}
+    .profile-role{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);margin-top:2px;}
+    .header-nav{display:flex;gap:8px;margin-top:8px;justify-content:flex-end;}
+    .nav-link{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);text-decoration:none;padding:4px 10px;border:1px solid transparent;border-radius:6px;transition:all 0.2s;}
+    .nav-link:hover{color:var(--text2);border-color:var(--border);}
+    .nav-link.active{color:var(--teal);border-color:rgba(0,201,167,0.25);background:rgba(0,201,167,0.06);}
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      font-size: 14px;
-      line-height: 1.5;
-      min-height: 100vh;
-    }
+    main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:40px 48px 80px;}
 
-    /* Header */
-    .site-header {
-      border-bottom: 1px solid var(--border);
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--surface);
-    }
-    .header-left { display: flex; align-items: center; gap: 14px; }
-    .avatar {
-      width: 36px; height: 36px; border-radius: 50%;
-      background: var(--surface2); border: 1px solid var(--border2);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: 0.5px;
-    }
-    .header-meta p { font-size: 13px; font-weight: 500; color: var(--text); }
-    .header-meta span { font-size: 11px; color: var(--muted); }
-    .header-nav { display: flex; gap: 8px; }
-    .nav-link {
-      font-size: 12px; color: var(--muted); text-decoration: none;
-      padding: 5px 10px; border-radius: 6px;
-      border: 1px solid transparent; transition: all 0.15s;
-    }
-    .nav-link:hover { color: var(--text); border-color: var(--border2); background: var(--surface2); }
-    .nav-link.active { color: var(--text); border-color: var(--border2); background: var(--surface2); }
+    .meta-bar{display:flex;gap:10px;margin-bottom:28px;flex-wrap:wrap;align-items:center;}
+    .meta-pill{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;display:flex;align-items:center;gap:6px;}
+    .meta-pill span{color:var(--text2);}
+    .meta-dot{width:5px;height:5px;border-radius:50%;background:var(--teal);flex-shrink:0;}
 
-    /* Hero */
-    .hero {
-      padding: 32px 24px 24px;
-      border-bottom: 1px solid var(--border);
-    }
-    .hero-eyebrow {
-      font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
-      color: var(--muted2); margin-bottom: 8px;
-    }
-    .hero h1 { font-size: 22px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
-    .hero p { font-size: 13px; color: var(--muted); max-width: 480px; }
-    .hero-meta {
-      display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;
-    }
-    .meta-pill {
-      font-size: 11px; color: var(--muted);
-      background: var(--surface2); border: 1px solid var(--border);
-      border-radius: 20px; padding: 4px 12px;
-      display: flex; align-items: center; gap: 5px;
-    }
-    .meta-pill span { color: var(--text); font-weight: 500; }
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;}
 
-    /* Main */
-    main { padding: 24px; max-width: 960px; margin: 0 auto; }
+    .platform-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+    .card-head{padding:16px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:var(--bg3);}
+    .plat-icon{width:32px;height:32px;border-radius:8px;background:rgba(47,123,229,0.12);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+    .plat-name{font-size:14px;font-weight:700;color:var(--text);}
+    .plat-tip{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-top:2px;letter-spacing:0.04em;}
 
-    .section-head {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 16px;
-    }
-    .section-head h2 { font-size: 13px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
-    .last-updated { font-size: 11px; color: var(--muted2); }
+    .job-row{display:flex;align-items:center;gap:8px;padding:10px 20px;border-bottom:1px solid var(--border);transition:background 0.15s;}
+    .job-row:last-child{border-bottom:none;}
+    .job-row:hover{background:var(--bg3);}
+    .job-title{flex:1;font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
+    .job-exp{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);white-space:nowrap;}
 
-    /* Platform grid */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-    }
-    @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+    .badge{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;padding:2px 8px;border-radius:20px;white-space:nowrap;letter-spacing:0.06em;border:1px solid;}
+    .b-24h{background:rgba(47,123,229,0.1);border-color:rgba(47,123,229,0.25);color:var(--blue-light);}
+    .b-live{background:rgba(0,201,167,0.08);border-color:rgba(0,201,167,0.25);color:var(--teal);}
+    .b-top{background:rgba(245,166,35,0.08);border-color:rgba(245,166,35,0.25);color:var(--amber);}
 
-    .platform-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-    .card-head {
-      padding: 12px 14px;
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; gap: 10px;
-      background: var(--surface2);
-    }
-    .plat-icon {
-      width: 28px; height: 28px; border-radius: 6px;
-      background: var(--bg); border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px;
-    }
-    .plat-info .plat-name { font-size: 13px; font-weight: 600; color: var(--text); }
-    .plat-info .plat-tip { font-size: 10px; color: var(--muted); margin-top: 1px; }
+    .open-btn{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;background:var(--blue);color:#fff;border:none;border-radius:6px;padding:4px 12px;cursor:pointer;text-decoration:none;white-space:nowrap;letter-spacing:0.04em;transition:all 0.2s;}
+    .open-btn:hover{background:var(--blue-light);transform:translateY(-1px);}
 
-    .job-row {
-      display: flex; align-items: center; gap: 8px;
-      padding: 9px 14px;
-      border-bottom: 1px solid var(--border);
-      transition: background 0.1s;
-    }
-    .job-row:last-child { border-bottom: none; }
-    .job-row:hover { background: var(--surface2); }
+    .jd-cta{margin-top:20px;background:rgba(47,123,229,0.06);border:1px solid var(--border-blue);border-radius:16px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+    .jd-cta-text p{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;}
+    .jd-cta-text span{font-family:'DM Mono',monospace;font-size:12px;color:var(--text3);}
+    .jd-cta-btn{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;padding:10px 22px;background:var(--blue);color:#fff;border:none;border-radius:8px;cursor:pointer;text-decoration:none;letter-spacing:0.06em;transition:all 0.2s;white-space:nowrap;}
+    .jd-cta-btn:hover{background:var(--blue-light);transform:translateY(-1px);}
 
-    .job-title {
-      flex: 1; font-size: 12px; color: var(--text);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      min-width: 0;
-    }
-    .job-exp { font-size: 10px; color: var(--muted2); white-space: nowrap; margin-right: 2px; }
+    footer{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 48px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;border-top:1px solid var(--border);padding-top:24px;}
+    footer span{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);}
+    .footer-links{display:flex;gap:16px;}
+    .footer-links a{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);text-decoration:none;transition:color 0.2s;}
+    .footer-links a:hover{color:var(--text2);}
 
-    .badge {
-      font-size: 9px; font-weight: 600; padding: 2px 7px;
-      border-radius: 20px; white-space: nowrap; letter-spacing: 0.3px;
-    }
-    .b-24h { background: var(--badge-24h-bg); color: var(--badge-24h); }
-    .b-live { background: var(--badge-live-bg); color: var(--badge-live); }
-    .b-top  { background: var(--badge-top-bg);  color: var(--badge-top);  }
+    ::-webkit-scrollbar{width:6px;}
+    ::-webkit-scrollbar-track{background:transparent;}
+    ::-webkit-scrollbar-thumb{background:var(--text3);border-radius:3px;}
 
-    .open-btn {
-      font-size: 10px; font-weight: 600;
-      background: var(--accent); color: #000;
-      border: none; border-radius: 5px;
-      padding: 4px 10px; cursor: pointer;
-      text-decoration: none; white-space: nowrap;
-      transition: opacity 0.15s;
+    @media(max-width:768px){
+      header{padding:24px 20px 0;flex-direction:column;gap:16px;}
+      .header-right{text-align:left;}
+      .header-nav{justify-content:flex-start;}
+      main{padding:24px 20px 60px;}
+      .grid{grid-template-columns:1fr;}
+      footer{padding:20px;}
     }
-    .open-btn:hover { opacity: 0.85; }
-
-    /* JD Matcher CTA */
-    .jd-cta {
-      margin-top: 24px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 18px 20px;
-      display: flex; align-items: center; justify-content: space-between; gap: 16px;
-      flex-wrap: wrap;
-    }
-    .jd-cta-left p { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
-    .jd-cta-left span { font-size: 12px; color: var(--muted); }
-    .jd-cta-btn {
-      font-size: 12px; font-weight: 600;
-      background: var(--accent); color: #000;
-      border: none; border-radius: 6px;
-      padding: 8px 16px; cursor: pointer;
-      text-decoration: none; white-space: nowrap;
-      transition: opacity 0.15s;
-    }
-    .jd-cta-btn:hover { opacity: 0.85; }
-
-    /* Footer */
-    footer {
-      margin-top: 40px; padding: 20px 24px;
-      border-top: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; gap: 8px;
-    }
-    footer span { font-size: 11px; color: var(--muted2); }
-    footer a { font-size: 11px; color: var(--muted); text-decoration: none; }
-    footer a:hover { color: var(--text); }
   </style>
 </head>
 <body>
 
-<header class="site-header">
+<div class="bg-glow"></div>
+<div class="bg-glow2"></div>
+
+<header>
   <div class="header-left">
-    <div class="avatar">MG</div>
-    <div class="header-meta">
-      <p>Mayur Goyal</p>
-      <span>Data Analyst · Delhi NCR</span>
-    </div>
+    <div class="header-tag">Morning Job Board</div>
+    <h1 class="header-title">Fresh <span>openings</span> — 24h</h1>
+    <p class="header-sub">Pre-filtered links · Delhi NCR · 0–2 years · 6 platforms</p>
   </div>
-  <nav class="header-nav">
-    <a href="https://mg67.vercel.app/" class="nav-link">← Portfolio</a>
-    <a href="/jobs" class="nav-link active">Job Board</a>
-    <a href="/jd" class="nav-link">JD Matcher</a>
-  </nav>
+  <div class="header-right">
+    <div class="profile-name">Mayur Goyal</div>
+    <div class="profile-role">Data Analyst · Delhi NCR</div>
+    <nav class="header-nav">
+      <a href="https://mg67.vercel.app/" class="nav-link">← Portfolio</a>
+      <a href="/jobs" class="nav-link active">Job Board</a>
+      <a href="/jd" class="nav-link">JD Matcher</a>
+    </nav>
+  </div>
 </header>
 
-<div class="hero">
-  <div class="hero-eyebrow">Morning Job Search · Updated daily</div>
-  <h1>Fresh openings — 24 hours</h1>
-  <p>Pre-filtered links for your roles across 6 platforms. Open, find a JD, then use the JD Matcher to pick the right resume.</p>
-  <div class="hero-meta">
-    <div class="meta-pill">Location <span>Delhi NCR</span></div>
-    <div class="meta-pill">Experience <span>0 – 2 years</span></div>
-    <div class="meta-pill">Filter <span>Last 24 hours</span></div>
-    <div class="meta-pill">Roles <span>Data / MIS / BA / Operations</span></div>
-  </div>
-</div>
-
 <main>
-  <div class="section-head">
-    <h2>Platforms</h2>
-    <span class="last-updated" id="lastUpdated"></span>
+  <div class="meta-bar">
+    <div class="meta-pill"><div class="meta-dot"></div>Location <span>Delhi NCR</span></div>
+    <div class="meta-pill"><div class="meta-dot"></div>Experience <span>0 – 2 years</span></div>
+    <div class="meta-pill"><div class="meta-dot"></div>Filter <span>Last 24 hours</span></div>
+    <div class="meta-pill"><div class="meta-dot"></div>Roles <span>Data / MIS / BA / Ops</span></div>
+    <div class="meta-pill" id="refreshedAt"></div>
   </div>
 
   <div class="grid" id="grid"></div>
 
   <div class="jd-cta">
-    <div class="jd-cta-left">
+    <div class="jd-cta-text">
       <p>Found a role? Match it to your resume.</p>
-      <span>Paste the JD → get best resume variant + application email in 10 seconds</span>
+      <span>Paste the JD → best resume variant + application email in 10 seconds</span>
     </div>
     <a href="/jd" class="jd-cta-btn">Open JD Matcher →</a>
   </div>
@@ -238,7 +129,7 @@
 
 <footer>
   <span>mg67.vercel.app/jobs</span>
-  <div style="display:flex;gap:16px">
+  <div class="footer-links">
     <a href="https://mg67.vercel.app/">Portfolio</a>
     <a href="/jd">JD Matcher</a>
     <a href="https://github.com/Mg6700" target="_blank" rel="noopener">GitHub</a>
@@ -252,13 +143,12 @@ const platforms = [
     name: "Naukri",
     icon: "💼",
     tip: 'Set "Date Posted = Today" after opening',
-    note: "NAUKRI.COM — HIGHEST VOLUME FOR INDIA FRESHERS",
     jobs: [
       { t: "Data Analyst", exp: "0–1 yr", b: "24h", u: "https://www.naukri.com/data-analyst-jobs-in-delhi-ncr?experience=0to2&jobAge=1&location=delhi%20ncr" },
       { t: "Power BI Analyst", exp: "Fresher", b: "24h", u: "https://www.naukri.com/power-bi-analyst-jobs-in-delhi-ncr?experience=0to2&jobAge=1&location=delhi%20ncr" },
       { t: "MIS Executive", exp: "0–1 yr", b: "24h", u: "https://www.naukri.com/mis-executive-jobs-in-delhi-ncr?experience=0to2&jobAge=1&location=delhi%20ncr" },
-      { t: "Business Analyst", exp: "Fresher", b: "24h", u: "https://www.naukri.com/business-analyst-jobs-in-delhi-ncr?experience=0to2&jobAge=1&location=delhi%20ncr" },
-      { t: "Reporting Analyst", exp: "Fresher", b: "24h", u: "https://www.naukri.com/reporting-analyst-jobs-in-delhi-ncr?experience=0to2&jobAge=1&location=delhi%20ncr" },
+      { t: "Business Analyst", exp: "0–2 yr", b: "24h", u: "https://www.naukri.com/business-analyst-jobs-in-delhi-ncr?experience=0to2&jobAge=1&location=delhi%20ncr" },
+      { t: "Reporting Analyst", exp: "0–2 yr", b: "24h", u: "https://www.naukri.com/reporting-analyst-jobs-in-delhi-ncr?experience=0to2&jobAge=1&location=delhi%20ncr" },
     ]
   },
   {
@@ -268,7 +158,7 @@ const platforms = [
     jobs: [
       { t: "Data Analyst", exp: "Entry Level", b: "live", u: "https://www.linkedin.com/jobs/search/?keywords=Data+Analyst&location=Delhi+NCR&f_E=2&f_TPR=r86400" },
       { t: "Power BI Analyst", exp: "Entry Level", b: "live", u: "https://www.linkedin.com/jobs/search/?keywords=Power+BI+Analyst&location=Delhi+NCR&f_E=2&f_TPR=r86400" },
-      { t: "SQL Analyst", exp: "Fresher", b: "live", u: "https://www.linkedin.com/jobs/search/?keywords=SQL+Analyst&location=Delhi+NCR&f_E=2&f_TPR=r86400" },
+      { t: "SQL Analyst", exp: "Entry Level", b: "live", u: "https://www.linkedin.com/jobs/search/?keywords=SQL+Analyst&location=Delhi+NCR&f_E=2&f_TPR=r86400" },
       { t: "MIS Analyst", exp: "Entry Level", b: "live", u: "https://www.linkedin.com/jobs/search/?keywords=MIS+Analyst&location=Delhi+NCR&f_E=2&f_TPR=r86400" },
       { t: "Junior Data Analyst", exp: "Entry Level", b: "live", u: "https://www.linkedin.com/jobs/search/?keywords=Junior+Data+Analyst&location=Delhi+NCR&f_E=2&f_TPR=r86400" },
     ]
@@ -279,7 +169,7 @@ const platforms = [
     tip: "fromage=1 = last 24 hours only",
     jobs: [
       { t: "Data Analyst + Power BI", exp: "0–2 yr", b: "24h", u: "https://in.indeed.com/jobs?q=data+analyst+power+bi&l=Delhi+NCR&fromage=1&explvl=entry_level" },
-      { t: "SQL Data Analyst", exp: "Fresher", b: "24h", u: "https://in.indeed.com/jobs?q=sql+data+analyst&l=Delhi+NCR&fromage=1&explvl=entry_level" },
+      { t: "SQL Data Analyst", exp: "0–2 yr", b: "24h", u: "https://in.indeed.com/jobs?q=sql+data+analyst&l=Delhi+NCR&fromage=1&explvl=entry_level" },
       { t: "MIS Executive · Excel", exp: "0–2 yr", b: "24h", u: "https://in.indeed.com/jobs?q=mis+executive+excel&l=Delhi+NCR&fromage=1&explvl=entry_level" },
       { t: "Junior Business Analyst", exp: "0–2 yr", b: "24h", u: "https://in.indeed.com/jobs?q=junior+business+analyst&l=Delhi+NCR&fromage=1&explvl=entry_level" },
       { t: "Operations Analyst", exp: "0–2 yr", b: "24h", u: "https://in.indeed.com/jobs?q=operations+analyst&l=Delhi+NCR&fromage=1&explvl=entry_level" },
@@ -290,8 +180,8 @@ const platforms = [
     icon: "🎓",
     tip: 'Sort by "Newest" — best for 0-yr freshers',
     jobs: [
-      { t: "Data Analytics Fresher Jobs", exp: "0 yr", b: "top", u: "https://internshala.com/jobs/data-analyst-jobs-in-delhi/" },
-      { t: "MIS Jobs", exp: "0–1 yr", b: "top", u: "https://internshala.com/jobs/mis-executive-jobs-in-delhi/" },
+      { t: "Data Analytics Jobs", exp: "0–1 yr", b: "top", u: "https://internshala.com/jobs/data-analyst-jobs-in-delhi/" },
+      { t: "MIS Executive Jobs", exp: "0–1 yr", b: "top", u: "https://internshala.com/jobs/mis-executive-jobs-in-delhi/" },
       { t: "SQL Jobs Fresher", exp: "0 yr", b: "top", u: "https://internshala.com/jobs/sql-jobs-in-delhi/" },
       { t: "Data Analytics Internships", exp: "0 yr", b: "top", u: "https://internshala.com/internships/data-science-internship-in-delhi/" },
       { t: "Business Analyst Fresher", exp: "0–1 yr", b: "top", u: "https://internshala.com/jobs/business-analyst-jobs-in-delhi/" },
@@ -327,36 +217,30 @@ const bLabel = { "24h": "24h filter", live: "Live now", top: "Top pick" };
 const bClass = { "24h": "b-24h", live: "b-live", top: "b-top" };
 
 const grid = document.getElementById("grid");
-
 platforms.forEach(p => {
   const card = document.createElement("div");
   card.className = "platform-card";
-
   const rows = p.jobs.map(j => `
     <div class="job-row">
       <span class="job-title">${j.t}</span>
       <span class="job-exp">${j.exp}</span>
       <span class="badge ${bClass[j.b]}">${bLabel[j.b]}</span>
       <a class="open-btn" href="${j.u}" target="_blank" rel="noopener">Open ↗</a>
-    </div>
-  `).join("");
-
+    </div>`).join("");
   card.innerHTML = `
     <div class="card-head">
       <div class="plat-icon">${p.icon}</div>
-      <div class="plat-info">
+      <div>
         <div class="plat-name">${p.name}</div>
         <div class="plat-tip">${p.tip}</div>
       </div>
-    </div>
-    ${rows}
-  `;
+    </div>${rows}`;
   grid.appendChild(card);
 });
 
 const now = new Date();
-document.getElementById("lastUpdated").textContent =
-  "Refreshed " + now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+const timeStr = now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+document.getElementById("refreshedAt").innerHTML = `Opened at <span>${timeStr}</span>`;
 </script>
 
 </body>
