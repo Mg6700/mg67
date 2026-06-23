@@ -15,7 +15,6 @@
     body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(47,123,229,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(47,123,229,0.05) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;}
     .bg-glow{position:fixed;width:600px;height:600px;background:radial-gradient(circle,rgba(47,123,229,0.08) 0%,transparent 60%);top:-200px;right:-100px;pointer-events:none;z-index:0;}
     .bg-glow2{position:fixed;width:400px;height:400px;background:radial-gradient(circle,rgba(0,201,167,0.06) 0%,transparent 60%);bottom:-100px;left:-50px;pointer-events:none;z-index:0;}
-
     header{position:relative;z-index:10;padding:32px 48px 0;display:flex;justify-content:space-between;align-items:flex-start;}
     .header-tag{font-family:'DM Mono',monospace;font-size:11px;color:var(--teal);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
     .header-tag::before{content:'';width:20px;height:1px;background:var(--teal);}
@@ -29,52 +28,41 @@
     .nav-link{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);text-decoration:none;padding:4px 10px;border:1px solid transparent;border-radius:6px;transition:all 0.2s;}
     .nav-link:hover{color:var(--text2);border-color:var(--border);}
     .nav-link.active{color:var(--teal);border-color:rgba(0,201,167,0.25);background:rgba(0,201,167,0.06);}
-
     main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:40px 48px 80px;}
-
     .meta-bar{display:flex;gap:10px;margin-bottom:28px;flex-wrap:wrap;align-items:center;}
     .meta-pill{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;display:flex;align-items:center;gap:6px;}
     .meta-pill span{color:var(--text2);}
     .meta-dot{width:5px;height:5px;border-radius:50%;background:var(--teal);flex-shrink:0;}
-
     .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;}
-
     .platform-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
     .card-head{padding:16px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:var(--bg3);}
     .plat-icon{width:32px;height:32px;border-radius:8px;background:rgba(47,123,229,0.12);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
     .plat-name{font-size:14px;font-weight:700;color:var(--text);}
     .plat-tip{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-top:2px;letter-spacing:0.04em;}
-
     .job-row{display:flex;align-items:center;gap:8px;padding:10px 20px;border-bottom:1px solid var(--border);transition:background 0.15s;}
     .job-row:last-child{border-bottom:none;}
     .job-row:hover{background:var(--bg3);}
     .job-title{flex:1;font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
     .job-exp{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);white-space:nowrap;}
-
     .badge{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;padding:2px 8px;border-radius:20px;white-space:nowrap;letter-spacing:0.06em;border:1px solid;}
     .b-24h{background:rgba(47,123,229,0.1);border-color:rgba(47,123,229,0.25);color:var(--blue-light);}
     .b-live{background:rgba(0,201,167,0.08);border-color:rgba(0,201,167,0.25);color:var(--teal);}
     .b-top{background:rgba(245,166,35,0.08);border-color:rgba(245,166,35,0.25);color:var(--amber);}
-
     .open-btn{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;background:var(--blue);color:#fff;border:none;border-radius:6px;padding:4px 12px;cursor:pointer;text-decoration:none;white-space:nowrap;letter-spacing:0.04em;transition:all 0.2s;}
     .open-btn:hover{background:var(--blue-light);transform:translateY(-1px);}
-
     .jd-cta{margin-top:20px;background:rgba(47,123,229,0.06);border:1px solid var(--border-blue);border-radius:16px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
     .jd-cta-text p{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;}
     .jd-cta-text span{font-family:'DM Mono',monospace;font-size:12px;color:var(--text3);}
     .jd-cta-btn{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;padding:10px 22px;background:var(--blue);color:#fff;border:none;border-radius:8px;cursor:pointer;text-decoration:none;letter-spacing:0.06em;transition:all 0.2s;white-space:nowrap;}
     .jd-cta-btn:hover{background:var(--blue-light);transform:translateY(-1px);}
-
     footer{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 48px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;border-top:1px solid var(--border);padding-top:24px;}
     footer span{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);}
     .footer-links{display:flex;gap:16px;}
     .footer-links a{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);text-decoration:none;transition:color 0.2s;}
     .footer-links a:hover{color:var(--text2);}
-
     ::-webkit-scrollbar{width:6px;}
     ::-webkit-scrollbar-track{background:transparent;}
     ::-webkit-scrollbar-thumb{background:var(--text3);border-radius:3px;}
-
     @media(max-width:768px){
       header{padding:24px 20px 0;flex-direction:column;gap:16px;}
       .header-right{text-align:left;}
@@ -86,7 +74,6 @@
   </style>
 </head>
 <body>
-
 <div class="bg-glow"></div>
 <div class="bg-glow2"></div>
 
@@ -142,25 +129,25 @@ const platforms = [
   {
     name: "Naukri",
     icon: "💼",
-    tip: 'Set "Date Posted = Today" after opening',
+    tip: 'Set "Date Posted = Today" + experience 0-2 yr after opening',
     jobs: [
-      { t: "Data Analyst", exp: "0–1 yr", b: "24h", u: "https://www.naukri.com/data-analyst-jobs-in-delhi-ncr?experience=0to2&jobAge=1&location=delhi%20ncr" },
-      { t: "Power BI Analyst", exp: "Fresher", b: "24h", u: "https://www.naukri.com/power-bi-analyst-jobs-in-delhi-ncr?experience=0to2&jobAge=1&location=delhi%20ncr" },
-      { t: "MIS Executive", exp: "0–1 yr", b: "24h", u: "https://www.naukri.com/mis-executive-jobs-in-delhi-ncr?experience=0to2&jobAge=1&location=delhi%20ncr" },
-      { t: "Business Analyst", exp: "0–2 yr", b: "24h", u: "https://www.naukri.com/business-analyst-jobs-in-delhi-ncr?experience=0to2&jobAge=1&location=delhi%20ncr" },
-      { t: "Reporting Analyst", exp: "0–2 yr", b: "24h", u: "https://www.naukri.com/reporting-analyst-jobs-in-delhi-ncr?experience=0to2&jobAge=1&location=delhi%20ncr" },
+      { t: "Data Analyst", exp: "0–2 yr", b: "24h", u: "https://www.naukri.com/data-analyst-jobs-in-delhi-ncr?experience=0to2&jobAge=1&location=delhi%20ncr&title=data+analyst" },
+      { t: "MIS Executive", exp: "0–2 yr", b: "24h", u: "https://www.naukri.com/mis-executive-jobs-in-delhi-ncr?experience=0to2&jobAge=1&location=delhi%20ncr&title=mis+executive" },
+      { t: "Business Analyst", exp: "0–2 yr", b: "24h", u: "https://www.naukri.com/business-analyst-jobs-in-delhi-ncr?experience=0to2&jobAge=1&location=delhi%20ncr&title=business+analyst" },
+      { t: "Reporting Analyst", exp: "0–2 yr", b: "24h", u: "https://www.naukri.com/reporting-analyst-jobs-in-delhi-ncr?experience=0to2&jobAge=1&location=delhi%20ncr&title=reporting+analyst" },
+      { t: "Operations Analyst", exp: "0–2 yr", b: "24h", u: "https://www.naukri.com/operations-analyst-jobs-in-delhi-ncr?experience=0to2&jobAge=1&location=delhi%20ncr&title=operations+analyst" },
     ]
   },
   {
     name: "LinkedIn Jobs",
     icon: "🔗",
-    tip: "Past 24 hours filter pre-baked in URL",
+    tip: "geoId=106187582 (Delhi region) · Entry level · Past 24h",
     jobs: [
-      { t: "Data Analyst", exp: "Entry Level", b: "live", u: "https://www.linkedin.com/jobs/search/?keywords=Data+Analyst&location=Delhi+NCR&f_E=2&f_TPR=r86400" },
-      { t: "Power BI Analyst", exp: "Entry Level", b: "live", u: "https://www.linkedin.com/jobs/search/?keywords=Power+BI+Analyst&location=Delhi+NCR&f_E=2&f_TPR=r86400" },
-      { t: "SQL Analyst", exp: "Entry Level", b: "live", u: "https://www.linkedin.com/jobs/search/?keywords=SQL+Analyst&location=Delhi+NCR&f_E=2&f_TPR=r86400" },
-      { t: "MIS Analyst", exp: "Entry Level", b: "live", u: "https://www.linkedin.com/jobs/search/?keywords=MIS+Analyst&location=Delhi+NCR&f_E=2&f_TPR=r86400" },
-      { t: "Junior Data Analyst", exp: "Entry Level", b: "live", u: "https://www.linkedin.com/jobs/search/?keywords=Junior+Data+Analyst&location=Delhi+NCR&f_E=2&f_TPR=r86400" },
+      { t: "Data Analyst", exp: "Entry Level", b: "live", u: "https://in.linkedin.com/jobs/search/?keywords=Data+Analyst&location=Delhi%2C+India&geoId=106187582&f_E=2&f_TPR=r86400" },
+      { t: "MIS Executive", exp: "Entry Level", b: "live", u: "https://in.linkedin.com/jobs/search/?keywords=MIS+Executive&location=Delhi%2C+India&geoId=106187582&f_E=2&f_TPR=r86400" },
+      { t: "Business Analyst", exp: "Entry Level", b: "live", u: "https://in.linkedin.com/jobs/search/?keywords=Business+Analyst&location=Delhi%2C+India&geoId=106187582&f_E=2&f_TPR=r86400" },
+      { t: "Power BI Analyst", exp: "Entry Level", b: "live", u: "https://in.linkedin.com/jobs/search/?keywords=Power+BI+Analyst&location=Delhi%2C+India&geoId=106187582&f_E=2&f_TPR=r86400" },
+      { t: "Junior Data Analyst", exp: "Entry Level", b: "live", u: "https://in.linkedin.com/jobs/search/?keywords=Junior+Data+Analyst&location=Delhi%2C+India&geoId=106187582&f_E=2&f_TPR=r86400" },
     ]
   },
   {
@@ -168,35 +155,35 @@ const platforms = [
     icon: "🔍",
     tip: "fromage=1 = last 24 hours only",
     jobs: [
-      { t: "Data Analyst + Power BI", exp: "0–2 yr", b: "24h", u: "https://in.indeed.com/jobs?q=data+analyst+power+bi&l=Delhi+NCR&fromage=1&explvl=entry_level" },
-      { t: "SQL Data Analyst", exp: "0–2 yr", b: "24h", u: "https://in.indeed.com/jobs?q=sql+data+analyst&l=Delhi+NCR&fromage=1&explvl=entry_level" },
-      { t: "MIS Executive · Excel", exp: "0–2 yr", b: "24h", u: "https://in.indeed.com/jobs?q=mis+executive+excel&l=Delhi+NCR&fromage=1&explvl=entry_level" },
-      { t: "Junior Business Analyst", exp: "0–2 yr", b: "24h", u: "https://in.indeed.com/jobs?q=junior+business+analyst&l=Delhi+NCR&fromage=1&explvl=entry_level" },
-      { t: "Operations Analyst", exp: "0–2 yr", b: "24h", u: "https://in.indeed.com/jobs?q=operations+analyst&l=Delhi+NCR&fromage=1&explvl=entry_level" },
+      { t: "Data Analyst", exp: "0–2 yr", b: "24h", u: "https://in.indeed.com/jobs?q=data+analyst&l=Delhi%2C+India&fromage=1&explvl=entry_level" },
+      { t: "MIS Executive", exp: "0–2 yr", b: "24h", u: "https://in.indeed.com/jobs?q=MIS+executive&l=Delhi%2C+India&fromage=1&explvl=entry_level" },
+      { t: "SQL Analyst", exp: "0–2 yr", b: "24h", u: "https://in.indeed.com/jobs?q=sql+analyst&l=Delhi%2C+India&fromage=1&explvl=entry_level" },
+      { t: "Business Analyst", exp: "0–2 yr", b: "24h", u: "https://in.indeed.com/jobs?q=business+analyst&l=Delhi%2C+India&fromage=1&explvl=entry_level" },
+      { t: "Operations Analyst", exp: "0–2 yr", b: "24h", u: "https://in.indeed.com/jobs?q=operations+analyst&l=Delhi%2C+India&fromage=1&explvl=entry_level" },
     ]
   },
   {
     name: "Internshala",
     icon: "🎓",
-    tip: 'Sort by "Newest" — best for 0-yr freshers',
+    tip: 'Sort by "Newest" after opening — best for 0-2 yr',
     jobs: [
-      { t: "Data Analytics Jobs", exp: "0–1 yr", b: "top", u: "https://internshala.com/jobs/data-analyst-jobs-in-delhi/" },
-      { t: "MIS Executive Jobs", exp: "0–1 yr", b: "top", u: "https://internshala.com/jobs/mis-executive-jobs-in-delhi/" },
-      { t: "SQL Jobs Fresher", exp: "0 yr", b: "top", u: "https://internshala.com/jobs/sql-jobs-in-delhi/" },
+      { t: "Data Analyst Jobs", exp: "0–2 yr", b: "top", u: "https://internshala.com/jobs/data-analyst-jobs-in-delhi/" },
+      { t: "MIS Executive Jobs", exp: "0–2 yr", b: "top", u: "https://internshala.com/jobs/mis-executive-jobs-in-delhi/" },
+      { t: "Business Analyst Jobs", exp: "0–2 yr", b: "top", u: "https://internshala.com/jobs/business-analyst-jobs-in-delhi/" },
+      { t: "SQL Jobs", exp: "0–2 yr", b: "top", u: "https://internshala.com/jobs/sql-jobs-in-delhi/" },
       { t: "Data Analytics Internships", exp: "0 yr", b: "top", u: "https://internshala.com/internships/data-science-internship-in-delhi/" },
-      { t: "Business Analyst Fresher", exp: "0–1 yr", b: "top", u: "https://internshala.com/jobs/business-analyst-jobs-in-delhi/" },
     ]
   },
   {
     name: "Glassdoor",
     icon: "🏢",
-    tip: "Entry level + last day filter applied",
+    tip: "IC2891681 = New Delhi · Entry level · Last day",
     jobs: [
-      { t: "Data Analyst", exp: "Entry", b: "24h", u: "https://www.glassdoor.co.in/Job/delhi-data-analyst-jobs-SRCH_IL.0,5_IC2940221_KO6,18.htm?seniorityType=entrylevel&fromAge=1" },
-      { t: "MIS Executive", exp: "Entry", b: "24h", u: "https://www.glassdoor.co.in/Job/delhi-mis-executive-jobs-SRCH_IL.0,5_IC2940221_KO6,19.htm?seniorityType=entrylevel&fromAge=1" },
-      { t: "Business Analyst", exp: "Entry", b: "24h", u: "https://www.glassdoor.co.in/Job/delhi-business-analyst-jobs-SRCH_IL.0,5_IC2940221_KO6,22.htm?seniorityType=entrylevel&fromAge=1" },
-      { t: "SQL Analyst", exp: "Entry", b: "24h", u: "https://www.glassdoor.co.in/Job/delhi-sql-analyst-jobs-SRCH_IL.0,5_IC2940221_KO6,17.htm?seniorityType=entrylevel&fromAge=1" },
-      { t: "Power BI Analyst", exp: "Entry", b: "24h", u: "https://www.glassdoor.co.in/Job/delhi-power-bi-analyst-jobs-SRCH_IL.0,5_IC2940221_KO6,22.htm?seniorityType=entrylevel&fromAge=1" },
+      { t: "Data Analyst", exp: "Entry", b: "24h", u: "https://www.glassdoor.co.in/Job/new-delhi-data-analyst-jobs-SRCH_IL.0,9_IC2891681_KO10,22.htm?seniorityType=entrylevel&fromAge=1" },
+      { t: "MIS Executive", exp: "Entry", b: "24h", u: "https://www.glassdoor.co.in/Job/new-delhi-mis-executive-jobs-SRCH_IL.0,9_IC2891681_KO10,23.htm?seniorityType=entrylevel&fromAge=1" },
+      { t: "Business Analyst", exp: "Entry", b: "24h", u: "https://www.glassdoor.co.in/Job/new-delhi-business-analyst-jobs-SRCH_IL.0,9_IC2891681_KO10,26.htm?seniorityType=entrylevel&fromAge=1" },
+      { t: "SQL Analyst", exp: "Entry", b: "24h", u: "https://www.glassdoor.co.in/Job/new-delhi-sql-analyst-jobs-SRCH_IL.0,9_IC2891681_KO10,21.htm?seniorityType=entrylevel&fromAge=1" },
+      { t: "Power BI Analyst", exp: "Entry", b: "24h", u: "https://www.glassdoor.co.in/Job/new-delhi-power-bi-analyst-jobs-SRCH_IL.0,9_IC2891681_KO10,26.htm?seniorityType=entrylevel&fromAge=1" },
     ]
   },
   {
@@ -204,11 +191,11 @@ const platforms = [
     icon: "🏆",
     tip: "Apply date filter manually after opening",
     jobs: [
-      { t: "Data Analyst", exp: "0–2 yr", b: "live", u: "https://unstop.com/jobs?search=data+analyst&location=Delhi&experience=0-2" },
-      { t: "Business Analyst", exp: "0–2 yr", b: "live", u: "https://unstop.com/jobs?search=business+analyst&location=Delhi&experience=0-2" },
-      { t: "MIS Executive", exp: "0–2 yr", b: "live", u: "https://unstop.com/jobs?search=mis+executive&location=Delhi&experience=0-2" },
-      { t: "Junior Data Analyst", exp: "0–2 yr", b: "live", u: "https://unstop.com/jobs?search=junior+data+analyst&location=Delhi&experience=0-2" },
-      { t: "Operations Analyst", exp: "0–2 yr", b: "live", u: "https://unstop.com/jobs?search=operations+analyst&location=Delhi&experience=0-2" },
+      { t: "Data Analyst", exp: "0–2 yr", b: "live", u: "https://unstop.com/jobs?search=data+analyst&oppType=jobs&location=New+Delhi" },
+      { t: "MIS Executive", exp: "0–2 yr", b: "live", u: "https://unstop.com/jobs?search=mis+executive&oppType=jobs&location=New+Delhi" },
+      { t: "Business Analyst", exp: "0–2 yr", b: "live", u: "https://unstop.com/jobs?search=business+analyst&oppType=jobs&location=New+Delhi" },
+      { t: "Junior Data Analyst", exp: "0–2 yr", b: "live", u: "https://unstop.com/jobs?search=junior+data+analyst&oppType=jobs&location=New+Delhi" },
+      { t: "Operations Analyst", exp: "0–2 yr", b: "live", u: "https://unstop.com/jobs?search=operations+analyst&oppType=jobs&location=New+Delhi" },
     ]
   }
 ];
@@ -242,6 +229,5 @@ const now = new Date();
 const timeStr = now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
 document.getElementById("refreshedAt").innerHTML = `Opened at <span>${timeStr}</span>`;
 </script>
-
 </body>
 </html>
