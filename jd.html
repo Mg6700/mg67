@@ -370,6 +370,24 @@ tweaks:["Mirror JD keywords in your summary","Highlight relevant metrics from yo
 }
 throw new Error("Could not parse response — please try again.");
 }
+async function cleanFetchedJD(rawText){
+const prompt=`The text below was scraped from a job posting webpage (could be LinkedIn, Naukri, a careers page, etc). It likely contains a mix of the actual job description PLUS unrelated noise — things like comments, "X people reacted", related post suggestions, navigation menus, footers, "About the company" boilerplate unrelated to the role, or other UI text.
+
+Your task: extract ONLY the actual job description content — role title, responsibilities, requirements, skills, experience needed, location, and any other genuine job-posting details. Discard everything else completely (comments, reactions, unrelated posts, navigation, ads, unrelated company history).
+
+If the text contains no real job description at all, respond with exactly: NO_JD_FOUND
+
+Otherwise, return ONLY the cleaned job description text — no commentary, no markdown, no explanation, just the extracted JD content as plain text.
+
+RAW SCRAPED TEXT:
+${rawText.slice(0,10000)}`;
+const cleaned=await callAPI(prompt,1500);
+const trimmed=cleaned.trim();
+if(trimmed==='NO_JD_FOUND'||trimmed.length<60){
+throw new Error('Could not find a clear job description on that page — it may be mostly comments or unrelated content. Please copy-paste the JD text directly.');
+}
+return trimmed;
+}
 async function fetchJDFromURL(url){
 const res=await fetch('/api/fetch-jd',{
 method:'POST',
@@ -388,7 +406,7 @@ throw new Error(data.error||'Could not fetch that link — please copy-paste the
 }
 if(data.error)throw new Error(data.error);
 if(!data.text)throw new Error('Could not read that page — please copy-paste the JD text instead.');
-return data.text;
+return await cleanFetchedJD(data.text);
 }
 async function analyze(){
 let jd=lastJD.trim();
@@ -400,7 +418,7 @@ document.getElementById('customResult').classList.remove('visible');
 document.getElementById('emailResult').classList.remove('visible');
 if(isLikelyURL(jd)){
 setLoading('analyze',true,'Analyze JD →');
-document.getElementById('analyzeBtnText').textContent='Fetching posting...';
+document.getElementById('analyzeBtnText').textContent='Fetching & cleaning posting...';
 try{
 jd=await fetchJDFromURL(jd);
 lastJD=jd;
