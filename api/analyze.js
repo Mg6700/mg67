@@ -31,8 +31,9 @@ module.exports = async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'openai/gpt-oss-20b',
-        max_tokens: max_tokens || 1000,
+        max_tokens: max_tokens || 4000,
         temperature: 0.3,
+        reasoning_effort: 'low',
         messages: [
           { role: 'user', content: prompt }
         ]
