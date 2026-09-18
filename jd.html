@@ -266,9 +266,9 @@ main{padding:24px 20px 60px;grid-template-columns:1fr;}
 </main>
 <script>
 const PROFILE=`CANDIDATE: Mayur Goyal
-Location: Delhi NCR
+Location: Delhi NCR (based in Agra, fully open to immediate relocation, no constraints)
 Education: B.Tech Computer Science, Anand Engineering College Agra, 2020-2024
-EXPERIENCE: Operations Associate - Merchant Data & Compliance at Pixeltruth (Nov 2024 - Mar 2026, 1.5 years)
+EXPERIENCE: Operations Associate - Merchant Data & Compliance at Pixeltruth (Nov 2024 - Mar 2026, EXACTLY 1.5 YEARS — never state any other duration)
 Pixeltruth = payment compliance intermediary between aggregators and merchants.
 - Processed 1 to 100,000+ merchant URLs per batch — product/service category, policy compliance, data accuracy
 - Applied MCC (Merchant Category Code) classification for payment aggregator reporting — influencing onboarding decisions
@@ -278,14 +278,17 @@ Pixeltruth = payment compliance intermediary between aggregators and merchants.
 - Improved turnaround 20% through process optimization
 SKILLS: SQL (Joins, Aggregations, Window Functions, CTEs, Recursive CTEs, Subqueries), Power BI (DAX, Data Modeling), Excel (Advanced Functions incl. XLOOKUP, INDEX-MATCH, Pivot Tables, Macros), Python (Pandas, NumPy), MySQL, Statistics, Data Cleaning, Business Analysis, MIS Reporting, Dashboard Development
 PROJECTS:
-1. Music Store SQL Analysis — 11 queries, 11-table DB, CTEs, recursive CTEs, ROW_NUMBER PARTITION BY, 6-table JOINs
-2. ICC T20 WC 2024 Power BI — role-based segmentation, Final XI selector, 50+ matches, custom DAX metrics
-3. Customer Revenue Segmentation Power BI — 656K transactions, $57M revenue, Blue cards = 83% revenue
-RESUME VARIANTS:
-1. Data Analyst (Resume_MayurGoyal-DA.pdf)
-2. Business Analyst (Resume_MayurGoyal-BA.pdf)
-3. MIS Analyst (Resume_MayurGoyal-MIS.pdf)
-4. Operations Analyst (Resume_MayurGoyal-Ops.pdf)`;
+1. ICC T20 WC 2024 Player Analysis (Power BI, DAX) — flagship project, role-based player segmentation, interactive Final XI selector, 50+ matches, custom DAX metrics
+2. Music Store Business Analysis (SQL, MySQL) — 11 complex queries, 11-table relational DB, CTEs, recursive CTEs, ROW_NUMBER PARTITION BY, 6-table JOINs, scalar subqueries
+3. Pizza Sales Analysis (SQL, Excel) — KPIs, peak order hours, revenue by category/size, top products, scalar subqueries
+4. Student Performance Analysis (Python, Pandas, Seaborn) — EDA on 30,641 student records, parental education as strongest score predictor
+5. Diwali Festive Sales Analysis (Python, Pandas, Seaborn) — EDA on 11,239 customers, female customers drive 70% of revenue, high-value segment identification
+6. US SuperStore Sales Analysis (Python, Pandas, Seaborn) — EDA across 7 dimensions, customer segment/profitability/shipping-mode analysis
+RESUME VARIANTS (each carries the ICC flagship plus one SQL project and one Python project suited to that role):
+1. Data Analyst (Resume_MayurGoyal-DA.pdf) — projects: ICC, Music Store, Student Performance
+2. Business Analyst (Resume_MayurGoyal-BA.pdf) — projects: ICC, Pizza Sales, Diwali Festive Sales
+3. MIS Analyst (Resume_MayurGoyal-MIS.pdf) — projects: ICC, Music Store, US SuperStore
+4. Operations Analyst (Resume_MayurGoyal-Ops.pdf) — projects: ICC, Pizza Sales, US SuperStore`;
 const SCORE_COLORS={'Data Analyst':'#2F7BE5','Business Analyst':'#00C9A7','MIS Analyst':'#F5A623','Operations Analyst':'#A78BFA'};
 let lastJD='';
 let emailType='cold';
@@ -468,7 +471,8 @@ IMPORTANT:
 - winnerFile values: Data Analyst → Resume_MayurGoyal-DA.pdf, Business Analyst → Resume_MayurGoyal-BA.pdf, MIS Analyst → Resume_MayurGoyal-MIS.pdf, Operations Analyst → Resume_MayurGoyal-Ops.pdf
 - winnerFile must always match the winner exactly
 - Scores 0-100 based on keyword overlap. The winner must have the highest score.
-- Tweaks must reference exact keywords from the JD. Keep each under 12 words. Never use double quotes inside tweak text.`;
+- Tweaks must reference exact keywords from the JD. Keep each under 12 words. Never use double quotes inside tweak text.
+- Never state, imply, or estimate a number of years/months of experience other than what is in CANDIDATE PROFILE. Never invent a skill, tool, project detail, or metric not present in CANDIDATE PROFILE.`;
 try{
 let text=await callAPI(prompt,900);
 let parsed;
@@ -564,6 +568,13 @@ setLoading('custom',true,'Generate Tailored Resume →');
 const prompt=`You are an expert resume writer. Create a fully tailored ATS-optimized resume in plain text.
 CANDIDATE PROFILE:\n${PROFILE}\nJOB DESCRIPTION:\n${lastJD}
 Write complete resume: PROFILE / SKILLS / EXPERIENCE / PROJECTS / EDUCATION
+
+ABSOLUTE FACTUAL RULE — READ BEFORE WRITING:
+- Mayur has EXACTLY 1.5 years of experience (Pixeltruth, Nov 2024–Mar 2026). Never state, imply, round up, average, or invent any other number of years or months of experience — not "2 years," not "nearly 2 years," nothing except what is explicitly in CANDIDATE PROFILE above.
+- Never invent a job title, employer, skill, tool, certification, degree, or metric that is not explicitly present in CANDIDATE PROFILE above.
+- If the JD asks for more experience or a skill Mayur does not have, do NOT paper over the gap by fabricating a number or a skill. Either omit that specific point, or let his real achievements/metrics make the case instead.
+- Only use the projects listed under PROJECTS in CANDIDATE PROFILE. Do not invent new projects or alter their metrics.
+
 Rules: strong action verbs, real metrics, mirror JD keywords naturally, bullets under 2 lines, no invented experience.`;
 try{
 const text=await callAPI(prompt,2000);
@@ -600,6 +611,12 @@ CONTEXT:
 - Company: ${company}
 - Found via: ${source}
 - Email type: ${typeMap[emailType]}
+
+ABSOLUTE FACTUAL RULE — THIS OVERRIDES EVERYTHING ELSE BELOW, INCLUDING THE JD'S STATED REQUIREMENTS:
+- Mayur has EXACTLY 1.5 years of experience (Pixeltruth, Nov 2024–Mar 2026). Never state, imply, round up, average, or invent any other number of years or months of experience — not "2 years," not "over a year," not "nearly 2 years" — nothing except what is explicitly in CANDIDATE PROFILE above.
+- Never invent a job title, employer, skill, tool, certification, degree, or metric that is not explicitly present in CANDIDATE PROFILE above.
+- If the JD asks for more years of experience than Mayur has, or a skill he does not list, do NOT address that requirement by fabricating a number or claiming a skill he doesn't have. Instead, either say nothing about that specific gap, or lean on his real, exact metrics (100K+ URLs processed, 30% reduction in manual reporting effort, 25% reduction in reporting inconsistencies, 20% improvement in turnaround time) to make the case honestly.
+- Only reference the projects explicitly listed under PROJECTS in CANDIDATE PROFILE above, with their real tools and real metrics as given. Do not invent new projects, tools, or numbers for them.
 
 STRICT RULES FOR BODY STRUCTURE — follow this exact format:
 1. Greeting line: "Dear ${hr},"
